@@ -108,7 +108,29 @@ pre{background:#04070d;border:1px solid var(--line2);border-radius:0 0 10px 10px
   padding:10px 18px;cursor:pointer;font-size:14px;max-width:48%}
 .ch-nav button:hover:enabled{border-color:var(--blue)}
 .ch-nav button:disabled{opacity:.35;cursor:default}
-.toc-item.finding{border:1px dashed rgba(245,197,66,.5)}
+/* slide viewer overlay */
+.slide-backdrop{position:fixed;inset:0;background:rgba(4,7,13,.92);z-index:100;display:none;flex-direction:column}
+.slide-backdrop.open{display:flex}
+.slide-bar{display:flex;align-items:center;gap:12px;padding:12px 20px;border-bottom:1px solid var(--line)}
+.slide-bar .title{font-weight:700;font-size:15px}
+.slide-bar .counter{color:var(--muted);font-size:13px;margin-left:auto}
+.slide-bar button{background:var(--panel2);border:1px solid var(--line2);color:var(--txt);border-radius:8px;padding:6px 12px;cursor:pointer;font-size:13px}
+.slide-bar button:hover{border-color:var(--blue)}
+.slide-body{flex:1;display:grid;place-items:center;padding:24px;overflow:auto}
+.slide{width:min(980px,92vw);background:var(--panel);border:1px solid var(--line2);border-radius:18px;padding:34px 40px;box-shadow:0 20px 60px rgba(0,0,0,.5)}
+.slide .s-head{display:flex;align-items:center;gap:14px;margin-bottom:18px}
+.slide .s-icon{font-size:40px}
+.slide .s-title{font-size:26px;font-weight:800;line-height:1.2}
+.slide .s-visual{background:#04070d;border:1px solid var(--line2);border-radius:12px;padding:16px;margin:16px 0;font-family:var(--mono);font-size:13px;line-height:1.5;overflow-x:auto;color:#cde3ff}
+.slide ul{margin:12px 0 12px 22px}
+.slide li{margin:7px 0;font-size:15px}
+.slide .s-map{margin-top:16px;padding:10px 14px;border-left:3px solid var(--kblue);background:rgba(74,124,247,.08);border-radius:8px;font-size:14px;color:var(--muted)}
+.slide .s-map b{color:var(--kblue)}
+.slide-nav{display:flex;justify-content:space-between;gap:12px;margin-top:18px}
+.slide-nav button{background:var(--panel2);border:1px solid var(--line2);color:var(--txt);border-radius:10px;padding:10px 20px;cursor:pointer;font-size:14px}
+.slide-nav button:hover:enabled{border-color:var(--blue)}
+.slide-nav button:disabled{opacity:.35;cursor:default}
+@media (max-width:640px){.slide{padding:22px 20px}.slide .s-title{font-size:20px}}
 </style>
 </head>
 <body>
@@ -121,12 +143,22 @@ pre{background:#04070d;border:1px solid var(--line2);border-radius:0 0 10px 10px
   <span class="tag">📘 Course</span>
   <div class="spacer"></div>
   <input id="search" class="search" type="search" placeholder="Search a concept… (e.g. StatefulSet, HANA, PVC)">
+  <button class="btn ghost small" id="tb-slides" title="Presentation slides">🎞️ Slides</button>
   <a class="backlink" href="index.html">← Back to the game</a>
 </header>
 
 <div class="layout">
   <aside id="toc"></aside>
   <main><div id="content"></div></main>
+</div>
+
+<div id="slide-backdrop" class="slide-backdrop">
+  <div class="slide-bar">
+    <span class="title">🎞️ Operation TLX — Kubernetes concepts</span>
+    <span class="counter" id="slide-counter"></span>
+    <button id="slide-close">✕ Close</button>
+  </div>
+  <div class="slide-body" id="slide-body"></div>
 </div>
 
 <script>
@@ -608,6 +640,220 @@ const QUIZ = [
 ];
 
 /* ================================================================
+   Slides (presentation deck)
+   ================================================================ */
+const SLIDES = [
+{ icon:"📦", title:"Container — the unit of packaging",
+  visual:`┌──────────────────────────────┐
+│  Container                   │
+│  • image (immutable)         │
+│  • process + libs            │
+│  • own filesystem namespace  │
+│  • isolated CPU / memory     │
+└──────────────────────────────┘`,
+  points:["A container is a process with its own isolated view of the OS (namespaces + cgroups).",
+          "It packages the application + its dependencies into an immutable image.",
+          "It does NOT run alone in Kubernetes: it lives inside a Pod."],
+  sap:"A container ≈ one SAP kernel instance (disp+work) packaged so it can run anywhere."},
+
+{ icon:"🫧", title:"Pod — the unit of execution",
+  visual:`Pod  (shared network + storage)
+  ├── container: disp-work   (port 3200, 3300)
+  ├── container: sidecar-logs
+  └── ephemeral volume`,
+  points:["Smallest unit Kubernetes deploys: 1+ containers sharing network, storage and lifecycle.",
+          "Pods are mortal: they die and get recreated with new names.",
+          "3 probes: liveness (restart if stuck), readiness (pull out of LB), startup (grace period)."],
+  sap:"A Pod ≈ one application server instance (PAS) — disposable, recreated by the Deployment."},
+
+{ icon:"🖥️", title:"Node — the muscle",
+  visual:`Node (VM / physical server)
+  ├── kubelet          (the agent)
+  ├── kube-proxy       (network)
+  ├── container runtime (containerd)
+  └── your Pods        (placed by the scheduler)`,
+  points:["A Node provides CPU, RAM and disk — like an old “application host”.",
+          "Nodes are interchangeable: the scheduler places pods, the kubelet runs them.",
+          "Never SSH the control plane; nodes are where your workloads live."],
+  sap:"A Node ≈ one VM host of your SAP landscape — cattle, not pet."},
+
+{ icon:"🧠", title:"Control plane — the brain",
+  visual:`kube-apiserver  ←  every request goes through here
+       │
+       ├── etcd            (the cluster's memory)
+       ├── scheduler       (places pods)
+       └── controller-mgr  (reconciles desired vs actual)`,
+  points:["The API server is the single front door (HTTPS/REST) — it IS the cluster.",
+          "etcd holds everything: back it up = back up the cluster.",
+          "Controllers run forever, comparing desired state to reality and fixing drift."],
+  sap:"Control plane ≈ ASCS + landscape database: the conductor of the whole system."},
+
+{ icon:"📦", title:"Namespace — your SID as a perimeter",
+  visual:`Cluster
+  ├── namespace: tlx   (QA)
+  ├── namespace: txp   (Prod)
+  └── namespace: kube-system`,
+  points:["A namespace = name, rights and quota compartment.",
+          "At Airbus: one SID = one namespace (TLX, TXP).",
+          "Namespaces isolate OBJECTS, not network/storage by default (use NetworkPolicy)."],
+  sap:"Namespace ≈ SID + SAP client + system group, merged into one concept."},
+
+{ icon:"🏷️", title:"Labels & selectors — the directory",
+  visual:`Pod  →  labels: { app: pas, sid: tlx, env: qa }
+Service selector →  matchLabels: { app: pas }`,
+  points:["A label is a key=value pair stuck on every object.",
+          "Nothing is “contained”: objects are LINKED by selectors.",
+          "Multi-dimensional: filter by any combination (app, sid, env, version)."],
+  sap:"Labels ≈ your structuring logic in T000, extended to pods, services, volumes, secrets."},
+
+{ icon:"🚀", title:"Deployment — controlled rollouts",
+  visual:`Deployment (replicas: 3)
+  └── ReplicaSet v2  (new image)
+        └── 3 Pods  ← rolling replace
+  └── ReplicaSet v1  (kept for rollback)`,
+  points:["Manages identical pods + rolling updates + revision history.",
+          "maxSurge / maxUnavailable control the rollout pace.",
+          "“kubectl rollout undo” in one second — instant rollback."],
+  sap:"Deployment ≈ replicable application server instances, driven by the cluster."},
+
+{ icon:"🔀", title:"Service — a stable entry point",
+  visual:`Service: pas-gw.tlx.svc.cluster.local
+  └── selector: app=pas
+        ├── Pod pas-abc
+        ├── Pod pas-def
+        └── Pod pas-ghi`,
+  points:["Pods die with ephemeral IPs; the Service gives a stable IP + DNS name.",
+          "ClusterIP (internal), NodePort (debug), LoadBalancer (public), ExternalName (alias).",
+          "CoreDNS resolves names natively — no hosts-file maintenance."],
+  sap:"Service ≈ naming via the message server (ms/…): reliable entry to moving instances."},
+
+{ icon:"🌐", title:"Ingress — the L7 gateway",
+  visual:`Internet → LoadBalancer → Ingress
+  ├── sap-tlx.airbus.internal  →  pas-gw:3300
+  └── TLS terminated here (cert-manager)`,
+  points:["Receives external HTTP/HTTPS and routes by hostname + path.",
+          "Terminates TLS automatically (Let's Encrypt via cert-manager).",
+          "Your datacenter reverse-proxy, declarative edition."],
+  sap:"Ingress ≈ the ICM/HTTP URL exposed to clients, but driven by YAML."},
+
+{ icon:"🔐", title:"ConfigMap & Secret — externalized config",
+  visual:`Image (immutable)
+  + ConfigMap  (profile params, readable)
+  + Secret     (passwords, base64, via Vault)`,
+  points:["Golden rule: one immutable image; config is injected at startup.",
+          "ConfigMap = readable config; Secret = sensitive data.",
+          "A Secret is NOT encrypted in etcd by default — use an external vault."],
+  sap:"ConfigMap ≈ SAP instance profiles; Secret ≈ SECSTORE / DB keys."},
+
+{ icon:"🏃", title:"StatefulSet — the SAP case",
+  visual:`StatefulSet: hana
+  ├── hana-0  (primary)   + PVC-0
+  ├── hana-1  (secondary) + PVC-1
+  └── podAntiAffinity: never on the same node`,
+  points:["Fixed, persistent identity: named pods, ordered startup, dedicated storage per replica.",
+          "Use it for anything with a “personality” (HANA, ASCS/ERS).",
+          "Headless Service gives per-pod DNS: hana-0.hana.tlx.svc.cluster.local."],
+  sap:"StatefulSet ≈ a named SAP instance; Pacemaker constraints become affinity."},
+
+{ icon:"💾", title:"PersistentVolume — storage that survives",
+  visual:`Pod → PVC (request) → PV (real disk) ← StorageClass (policy)
+Access modes: RWO (1 node) / ROX (many read) / RWX (many read-write)`,
+  points:["Pod storage is ephemeral; databases need a persistent volume.",
+          "PVC = the app's request; PV = the cluster's resource; StorageClass = the policy.",
+          "RWX (NFS-style) is the answer for shared /usr/sap/trans."],
+  sap:"PVC ≈ your dedicated DB volume; RWX PVC ≈ the shared transport directory."},
+
+{ icon:"🛂", title:"RBAC — who can do what",
+  visual:`Role (namespace) + RoleBinding  →  user/group
+ClusterRole + ClusterRoleBinding  →  cluster-wide
+ServiceAccount  →  a pod's identity`,
+  points:["Every action goes through the API server and is checked by RBAC.",
+          "Role/RoleBinding = namespace scope; ClusterRole = cluster scope.",
+          "ServiceAccount = the identity of a process, not a person."],
+  sap:"RBAC ≈ PFCG roles and authorizations — but versioned in YAML."},
+
+{ icon:"⚖️", title:"Resources & scheduling",
+  visual:`requests = guaranteed (scheduler uses these)
+limits   = ceiling (CPU throttles, memory kills)
+QoS: Guaranteed (req=lim) > Burstable > BestEffort`,
+  points:["requests = what the scheduler guarantees; limits = the hard ceiling.",
+          "Exceeding the memory limit → OOMKill (exit 137).",
+          "nodeSelector, podAntiAffinity, taints/tolerations control placement."],
+  sap:"requests/limits ≈ kernel & JVM memory settings, declared per instance in YAML."},
+
+{ icon:"📈", title:"HPA — autoscaling",
+  visual:`Deployment (3 replicas)
+  ↑ metrics (CPU > 70%)
+  └── HPA adds replicas automatically`,
+  points:["Scales replicas up/down on metrics (CPU, memory, custom).",
+          "Works with Deployments and StatefulSets.",
+          "The cluster reacts to load the way a human operator would — but instantly."],
+  sap:"HPA ≈ dynamic resource adjustment, but at application level, automatic."},
+
+{ icon:"🔧", title:"Troubleshooting — the field guide",
+  visual:`1. kubectl get pods | grep -v Running
+2. kubectl describe pod  → Events
+3. kubectl logs --previous
+4. kubectl top nodes/pods
+5. kubectl get events --sort-by`,
+  points:["ImagePullBackOff → image/registry/auth issue.",
+          "CrashLoopBackOff → process crashes in a loop (check logs --previous).",
+          "OOMKilled (137) → memory limit exceeded.",
+          "Pending → scheduler found no node (resources/affinity/taint)."],
+  sap:"The same diagnosis flow as Basis — but the cluster tells you why in the Events."},
+
+{ icon:"🗺️", title:"SAP → Kubernetes — the big picture",
+  visual:`SID  →  Namespace
+ASCS →  StatefulSet + Service
+PAS  →  Deployment (rolling)
+HANA →  StatefulSet + PVC
+PFCG →  RBAC
+CTS+ →  Git + GitOps`,
+  points:["70% of your Basis reflexes survive the migration.",
+          "The other 30% is vocabulary: a new name for each familiar concept.",
+          "Everything is declarative, versioned and reproducible."],
+  sap:"You are not learning a new universe — you are translating it."}
+];
+
+/* ----- slide viewer ----- */
+let slideIdx = 0;
+function openSlides(i){
+  slideIdx = (i==null?0:i);
+  const bd = $("#slide-backdrop");
+  bd.classList.add("open");
+  renderSlide();
+  document.addEventListener("keydown", slideKey);
+}
+function closeSlides(){
+  $("#slide-backdrop").classList.remove("open");
+  document.removeEventListener("keydown", slideKey);
+}
+function slideKey(e){
+  if(e.key==="Escape") closeSlides();
+  if(e.key==="ArrowRight") nextSlide();
+  if(e.key==="ArrowLeft") prevSlide();
+}
+function renderSlide(){
+  const s = SLIDES[slideIdx];
+  $("#slide-counter").textContent = (slideIdx+1) + " / " + SLIDES.length;
+  $("#slide-body").innerHTML = `
+    <div class="slide">
+      <div class="s-head"><span class="s-icon">${s.icon}</span><span class="s-title">${s.title}</span></div>
+      <div class="s-visual">${s.visual}</div>
+      <ul>${s.points.map(p=>`<li>${p}</li>`).join("")}</ul>
+      <div class="s-map"><b>🔁 SAP translation:</b> ${s.sap}</div>
+      <div class="slide-nav">
+        <button id="slide-prev" ${slideIdx===0?"disabled":""}>← Prev</button>
+        <button id="slide-next" ${slideIdx===SLIDES.length-1?"disabled":""}>Next →</button>
+      </div>
+    </div>`;
+  $("#slide-prev").addEventListener("click", prevSlide);
+  $("#slide-next").addEventListener("click", nextSlide);
+}
+function prevSlide(){ if(slideIdx>0){ slideIdx--; renderSlide(); } }
+function nextSlide(){ if(slideIdx<SLIDES.length-1){ slideIdx++; renderSlide(); } }
+
+/* ================================================================
    Rendering
    ================================================================ */
 const $ = s => document.querySelector(s);
@@ -701,6 +947,14 @@ $("#toc").innerHTML = CHAPTERS.map((c,i)=>
 $("#toc").addEventListener("click", e=>{
   const it = e.target.closest(".toc-item"); if(it) show(+it.dataset.i);
 });
+const slidesEntry = document.createElement("div");
+slidesEntry.className = "toc-item";
+slidesEntry.style.marginTop = "10px";
+slidesEntry.style.borderTop = "1px solid var(--line)";
+slidesEntry.style.paddingTop = "12px";
+slidesEntry.innerHTML = '<span class="n">🎞️</span><span>Presentation slides</span>';
+slidesEntry.addEventListener("click", ()=>openSlides(0));
+$("#toc").appendChild(slidesEntry);
 document.addEventListener("keydown", e=>{
   if(e.target.tagName==="INPUT"||e.target.tagName==="TEXTAREA") return;
   if(e.key==="ArrowRight") show(cur+1);
@@ -731,6 +985,12 @@ document.addEventListener("click", e=>{
 /* init (direct chapter access: ?ch=7) */
 const want = new URLSearchParams(location.search).get("ch");
 show(want ? Math.min(CHAPTERS.length-1, Math.max(0, +want-1)) : 0);
+$("#tb-slides").addEventListener("click", ()=>openSlides(0));
+$("#slide-close").addEventListener("click", closeSlides);
+$("#slide-backdrop").addEventListener("click", e=>{
+  if(e.target.id==="slide-backdrop") closeSlides();
+});
+if(new URLSearchParams(location.search).get("slides")) openSlides(0);
 </script>
 </body>
 </html>
