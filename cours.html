@@ -122,6 +122,7 @@ pre{background:#04070d;border:1px solid var(--line2);border-radius:0 0 10px 10px
 .slide .s-icon{font-size:40px}
 .slide .s-title{font-size:26px;font-weight:800;line-height:1.2}
 .slide .s-visual{background:#04070d;border:1px solid var(--line2);border-radius:12px;padding:16px;margin:16px 0;font-family:var(--mono);font-size:13px;line-height:1.5;overflow-x:auto;color:#cde3ff}
+.slide .s-visual svg{width:100%;height:auto;display:block}
 .slide ul{margin:12px 0 12px 22px}
 .slide li{margin:7px 0;font-size:15px}
 .slide .s-map{margin-top:16px;padding:10px 14px;border-left:3px solid var(--kblue);background:rgba(74,124,247,.08);border-radius:8px;font-size:14px;color:var(--muted)}
@@ -644,171 +645,120 @@ const QUIZ = [
    ================================================================ */
 const SLIDES = [
 { icon:"📦", title:"Container — the unit of packaging",
-  visual:`┌──────────────────────────────┐
-│  Container                   │
-│  • image (immutable)         │
-│  • process + libs            │
-│  • own filesystem namespace  │
-│  • isolated CPU / memory     │
-└──────────────────────────────┘`,
+  visual:`<svg viewBox="0 0 440 200" xmlns="http://www.w3.org/2000/svg"><rect x="120" y="18" width="200" height="164" rx="12" fill="#121c30" stroke="#4a7cf7" stroke-width="2"/><text x="220" y="40" font-size="14" fill="#4a7cf7" text-anchor="middle" font-weight="bold">Container</text><rect x="140" y="52" width="160" height="26" rx="6" fill="#0e1626" stroke="#2a3a5f"/><text x="220" y="69" font-size="12" fill="#d7e1f5" text-anchor="middle">image (immutable)</text><rect x="140" y="82" width="160" height="26" rx="6" fill="#0e1626" stroke="#2a3a5f"/><text x="220" y="99" font-size="12" fill="#d7e1f5" text-anchor="middle">process + libraries</text><rect x="140" y="112" width="160" height="26" rx="6" fill="#0e1626" stroke="#2a3a5f"/><text x="220" y="129" font-size="12" fill="#d7e1f5" text-anchor="middle">own filesystem (namespaces)</text><rect x="140" y="142" width="160" height="26" rx="6" fill="#0e1626" stroke="#2a3a5f"/><text x="220" y="159" font-size="12" fill="#d7e1f5" text-anchor="middle">isolated CPU / memory (cgroups)</text></svg>`,
   points:["A container is a process with its own isolated view of the OS (namespaces + cgroups).",
           "It packages the application + its dependencies into an immutable image.",
-          "It does NOT run alone in Kubernetes: it lives inside a Pod."],
+          "It never runs alone in Kubernetes: it lives inside a Pod."],
   sap:"A container ≈ one SAP kernel instance (disp+work) packaged so it can run anywhere."},
 
 { icon:"🫧", title:"Pod — the unit of execution",
-  visual:`Pod  (shared network + storage)
-  ├── container: disp-work   (port 3200, 3300)
-  ├── container: sidecar-logs
-  └── ephemeral volume`,
-  points:["Smallest unit Kubernetes deploys: 1+ containers sharing network, storage and lifecycle.",
+  visual:`<svg viewBox="0 0 440 200" xmlns="http://www.w3.org/2000/svg"><rect x="60" y="18" width="320" height="164" rx="12" fill="#121c30" stroke="#4a7cf7" stroke-width="2"/><text x="220" y="40" font-size="14" fill="#4a7cf7" text-anchor="middle" font-weight="bold">Pod (shared network + storage)</text><rect x="80" y="52" width="135" height="72" rx="8" fill="#0e1626" stroke="#2a3a5f"/><text x="147" y="78" font-size="12" fill="#d7e1f5" text-anchor="middle">disp-work</text><text x="147" y="96" font-size="11" fill="#8fa3c8" text-anchor="middle">ports 3200, 3300</text><rect x="225" y="52" width="135" height="72" rx="8" fill="#0e1626" stroke="#2a3a5f"/><text x="292" y="78" font-size="12" fill="#d7e1f5" text-anchor="middle">sidecar-logs</text><text x="292" y="96" font-size="11" fill="#8fa3c8" text-anchor="middle">shares network</text><rect x="80" y="134" width="280" height="32" rx="6" fill="#070b14" stroke="#3ecf8e" stroke-dasharray="4 3"/><text x="220" y="154" font-size="11" fill="#3ecf8e" text-anchor="middle">ephemeral shared volume</text></svg>`,
+  points:["Smallest unit Kubernetes deploys: one or more containers sharing network, storage and lifecycle.",
           "Pods are mortal: they die and get recreated with new names.",
-          "3 probes: liveness (restart if stuck), readiness (pull out of LB), startup (grace period)."],
+          "Three probes: liveness (restart if stuck), readiness (pull out of load-balancing), startup (grace period)."],
   sap:"A Pod ≈ one application server instance (PAS) — disposable, recreated by the Deployment."},
 
 { icon:"🖥️", title:"Node — the muscle",
-  visual:`Node (VM / physical server)
-  ├── kubelet          (the agent)
-  ├── kube-proxy       (network)
-  ├── container runtime (containerd)
-  └── your Pods        (placed by the scheduler)`,
+  visual:`<svg viewBox="0 0 440 200" xmlns="http://www.w3.org/2000/svg"><rect x="40" y="10" width="360" height="180" rx="12" fill="#121c30" stroke="#4a7cf7" stroke-width="2"/><text x="220" y="32" font-size="14" fill="#4a7cf7" text-anchor="middle" font-weight="bold">Node (VM / physical server)</text><rect x="60" y="45" width="150" height="24" rx="5" fill="#0e1626" stroke="#2a3a5f"/><text x="135" y="61" font-size="11" fill="#d7e1f5" text-anchor="middle">kubelet (agent)</text><rect x="60" y="74" width="150" height="24" rx="5" fill="#0e1626" stroke="#2a3a5f"/><text x="135" y="90" font-size="11" fill="#d7e1f5" text-anchor="middle">kube-proxy (network)</text><rect x="60" y="103" width="150" height="24" rx="5" fill="#0e1626" stroke="#2a3a5f"/><text x="135" y="119" font-size="11" fill="#d7e1f5" text-anchor="middle">containerd (runtime)</text><text x="290" y="62" font-size="12" fill="#8fa3c8" text-anchor="middle">your Pods</text><rect x="230" y="72" width="60" height="40" rx="6" fill="#070b14" stroke="#3ecf8e"/><text x="260" y="96" font-size="10" fill="#3ecf8e" text-anchor="middle">Pod</text><rect x="300" y="72" width="60" height="40" rx="6" fill="#070b14" stroke="#3ecf8e"/><text x="330" y="96" font-size="10" fill="#3ecf8e" text-anchor="middle">Pod</text><rect x="230" y="120" width="60" height="40" rx="6" fill="#070b14" stroke="#3ecf8e"/><text x="260" y="144" font-size="10" fill="#3ecf8e" text-anchor="middle">Pod</text><rect x="300" y="120" width="60" height="40" rx="6" fill="#070b14" stroke="#3ecf8e"/><text x="330" y="144" font-size="10" fill="#3ecf8e" text-anchor="middle">Pod</text></svg>`,
   points:["A Node provides CPU, RAM and disk — like an old “application host”.",
           "Nodes are interchangeable: the scheduler places pods, the kubelet runs them.",
           "Never SSH the control plane; nodes are where your workloads live."],
   sap:"A Node ≈ one VM host of your SAP landscape — cattle, not pet."},
 
 { icon:"🧠", title:"Control plane — the brain",
-  visual:`kube-apiserver  ←  every request goes through here
-       │
-       ├── etcd            (the cluster's memory)
-       ├── scheduler       (places pods)
-       └── controller-mgr  (reconciles desired vs actual)`,
+  visual:`<svg viewBox="0 0 440 200" xmlns="http://www.w3.org/2000/svg"><defs><marker id="a" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="#8fa3c8"/></marker></defs><rect x="150" y="10" width="140" height="44" rx="8" fill="#121c30" stroke="#4a7cf7" stroke-width="2"/><text x="220" y="36" font-size="13" fill="#4a7cf7" text-anchor="middle" font-weight="bold">kube-apiserver</text><text x="220" y="64" font-size="10" fill="#8fa3c8" text-anchor="middle">every request goes here</text><line x1="220" y1="54" x2="95" y2="85" stroke="#8fa3c8" stroke-width="1.5" marker-end="url(#a)"/><line x1="220" y1="54" x2="220" y2="85" stroke="#8fa3c8" stroke-width="1.5" marker-end="url(#a)"/><line x1="220" y1="54" x2="345" y2="85" stroke="#8fa3c8" stroke-width="1.5" marker-end="url(#a)"/><rect x="40" y="85" width="110" height="40" rx="8" fill="#0e1626" stroke="#2a3a5f"/><text x="95" y="100" font-size="11" fill="#d7e1f5" text-anchor="middle">etcd</text><text x="95" y="116" font-size="10" fill="#8fa3c8" text-anchor="middle">memory</text><rect x="165" y="85" width="110" height="40" rx="8" fill="#0e1626" stroke="#2a3a5f"/><text x="220" y="100" font-size="11" fill="#d7e1f5" text-anchor="middle">scheduler</text><text x="220" y="116" font-size="10" fill="#8fa3c8" text-anchor="middle">places pods</text><rect x="290" y="85" width="110" height="40" rx="8" fill="#0e1626" stroke="#2a3a5f"/><text x="345" y="100" font-size="11" fill="#d7e1f5" text-anchor="middle">controller-mgr</text><text x="345" y="116" font-size="10" fill="#8fa3c8" text-anchor="middle">reconciles</text><text x="220" y="160" font-size="11" fill="#8fa3c8" text-anchor="middle">controllers run forever: desired vs actual state</text></svg>`,
   points:["The API server is the single front door (HTTPS/REST) — it IS the cluster.",
-          "etcd holds everything: back it up = back up the cluster.",
+          "etcd holds everything: backing it up = backing up the cluster.",
           "Controllers run forever, comparing desired state to reality and fixing drift."],
   sap:"Control plane ≈ ASCS + landscape database: the conductor of the whole system."},
 
 { icon:"📦", title:"Namespace — your SID as a perimeter",
-  visual:`Cluster
-  ├── namespace: tlx   (QA)
-  ├── namespace: txp   (Prod)
-  └── namespace: kube-system`,
+  visual:`<svg viewBox="0 0 440 200" xmlns="http://www.w3.org/2000/svg"><rect x="20" y="20" width="400" height="160" rx="12" fill="#0e1626" stroke="#2a3a5f" stroke-dasharray="5 4"/><text x="220" y="42" font-size="13" fill="#8fa3c8" text-anchor="middle">Cluster</text><rect x="40" y="55" width="115" height="110" rx="8" fill="#121c30" stroke="#4a7cf7"/><text x="97" y="78" font-size="13" fill="#4a7cf7" text-anchor="middle" font-weight="bold">tlx</text><text x="97" y="96" font-size="10" fill="#8fa3c8" text-anchor="middle">QA</text><rect x="55" y="108" width="85" height="18" rx="4" fill="#070b14" stroke="#3ecf8e"/><text x="97" y="121" font-size="9" fill="#3ecf8e" text-anchor="middle">pods, svcs…</text><rect x="55" y="132" width="85" height="18" rx="4" fill="#070b14" stroke="#3ecf8e"/><text x="97" y="145" font-size="9" fill="#3ecf8e" text-anchor="middle">quotas, RBAC</text><rect x="162" y="55" width="115" height="110" rx="8" fill="#121c30" stroke="#f5c542"/><text x="220" y="78" font-size="13" fill="#f5c542" text-anchor="middle" font-weight="bold">txp</text><text x="220" y="96" font-size="10" fill="#8fa3c8" text-anchor="middle">Prod</text><rect x="177" y="108" width="85" height="18" rx="4" fill="#070b14" stroke="#3ecf8e"/><text x="219" y="121" font-size="9" fill="#3ecf8e" text-anchor="middle">pods, svcs…</text><rect x="177" y="132" width="85" height="18" rx="4" fill="#070b14" stroke="#3ecf8e"/><text x="219" y="145" font-size="9" fill="#3ecf8e" text-anchor="middle">quotas, RBAC</text><rect x="285" y="55" width="115" height="110" rx="8" fill="#121c30" stroke="#8fa3c8"/><text x="342" y="78" font-size="12" fill="#8fa3c8" text-anchor="middle" font-weight="bold">kube-system</text><text x="342" y="96" font-size="10" fill="#8fa3c8" text-anchor="middle">cluster</text><rect x="300" y="108" width="85" height="18" rx="4" fill="#070b14" stroke="#3ecf8e"/><text x="342" y="121" font-size="9" fill="#3ecf8e" text-anchor="middle">CoreDNS, CNI…</text></svg>`,
   points:["A namespace = name, rights and quota compartment.",
           "At Airbus: one SID = one namespace (TLX, TXP).",
           "Namespaces isolate OBJECTS, not network/storage by default (use NetworkPolicy)."],
   sap:"Namespace ≈ SID + SAP client + system group, merged into one concept."},
 
 { icon:"🏷️", title:"Labels & selectors — the directory",
-  visual:`Pod  →  labels: { app: pas, sid: tlx, env: qa }
-Service selector →  matchLabels: { app: pas }`,
+  visual:`<svg viewBox="0 0 440 200" xmlns="http://www.w3.org/2000/svg"><defs><marker id="a" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="#8fa3c8"/></marker></defs><rect x="40" y="40" width="150" height="74" rx="8" fill="#121c30" stroke="#3ecf8e"/><text x="115" y="62" font-size="12" fill="#3ecf8e" text-anchor="middle" font-weight="bold">Pod</text><rect x="55" y="72" width="62" height="16" rx="8" fill="#070b14" stroke="#4a7cf7"/><text x="86" y="84" font-size="9" fill="#4a7cf7" text-anchor="middle">app: pas</text><rect x="122" y="72" width="58" height="16" rx="8" fill="#070b14" stroke="#f5c542"/><text x="151" y="84" font-size="9" fill="#f5c542" text-anchor="middle">sid: tlx</text><rect x="55" y="92" width="58" height="16" rx="8" fill="#070b14" stroke="#8fa3c8"/><text x="84" y="104" font-size="9" fill="#8fa3c8" text-anchor="middle">env: qa</text><rect x="250" y="40" width="150" height="74" rx="8" fill="#121c30" stroke="#4a7cf7"/><text x="325" y="62" font-size="12" fill="#4a7cf7" text-anchor="middle" font-weight="bold">Service</text><text x="325" y="82" font-size="10" fill="#8fa3c8" text-anchor="middle">selector:</text><text x="325" y="98" font-size="10" fill="#d7e1f5" text-anchor="middle">app: pas</text><line x1="190" y1="77" x2="250" y2="77" stroke="#8fa3c8" stroke-width="1.5" marker-end="url(#a)"/><text x="220" y="70" font-size="9" fill="#8fa3c8" text-anchor="middle">links by</text><text x="220" y="140" font-size="11" fill="#8fa3c8" text-anchor="middle">Nothing is "contained" — objects are linked by selectors</text></svg>`,
   points:["A label is a key=value pair stuck on every object.",
           "Nothing is “contained”: objects are LINKED by selectors.",
           "Multi-dimensional: filter by any combination (app, sid, env, version)."],
   sap:"Labels ≈ your structuring logic in T000, extended to pods, services, volumes, secrets."},
 
 { icon:"🚀", title:"Deployment — controlled rollouts",
-  visual:`Deployment (replicas: 3)
-  └── ReplicaSet v2  (new image)
-        └── 3 Pods  ← rolling replace
-  └── ReplicaSet v1  (kept for rollback)`,
+  visual:`<svg viewBox="0 0 440 200" xmlns="http://www.w3.org/2000/svg"><defs><marker id="a" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="#8fa3c8"/></marker></defs><rect x="150" y="10" width="140" height="36" rx="8" fill="#121c30" stroke="#4a7cf7" stroke-width="2"/><text x="220" y="32" font-size="12" fill="#4a7cf7" text-anchor="middle" font-weight="bold">Deployment (3 replicas)</text><line x1="220" y1="46" x2="220" y2="62" stroke="#8fa3c8" stroke-width="1.5" marker-end="url(#a)"/><rect x="60" y="65" width="140" height="44" rx="8" fill="#0e1626" stroke="#f5c542"/><text x="130" y="82" font-size="11" fill="#f5c542" text-anchor="middle" font-weight="bold">ReplicaSet v2</text><text x="130" y="98" font-size="10" fill="#8fa3c8" text-anchor="middle">new image</text><rect x="240" y="65" width="140" height="44" rx="8" fill="#0e1626" stroke="#8fa3c8" stroke-dasharray="4 3"/><text x="310" y="82" font-size="11" fill="#8fa3c8" text-anchor="middle">ReplicaSet v1</text><text x="310" y="98" font-size="10" fill="#8fa3c8" text-anchor="middle">kept for rollback</text><rect x="40" y="125" width="60" height="32" rx="6" fill="#070b14" stroke="#3ecf8e"/><text x="70" y="145" font-size="10" fill="#3ecf8e" text-anchor="middle">Pod</text><rect x="110" y="125" width="60" height="32" rx="6" fill="#070b14" stroke="#3ecf8e"/><text x="140" y="145" font-size="10" fill="#3ecf8e" text-anchor="middle">Pod</text><rect x="180" y="125" width="60" height="32" rx="6" fill="#070b14" stroke="#3ecf8e"/><text x="210" y="145" font-size="10" fill="#3ecf8e" text-anchor="middle">Pod</text><text x="130" y="175" font-size="10" fill="#8fa3c8" text-anchor="middle">rolling replace (maxSurge / maxUnavailable)</text></svg>`,
   points:["Manages identical pods + rolling updates + revision history.",
           "maxSurge / maxUnavailable control the rollout pace.",
           "“kubectl rollout undo” in one second — instant rollback."],
   sap:"Deployment ≈ replicable application server instances, driven by the cluster."},
 
 { icon:"🔀", title:"Service — a stable entry point",
-  visual:`Service: pas-gw.tlx.svc.cluster.local
-  └── selector: app=pas
-        ├── Pod pas-abc
-        ├── Pod pas-def
-        └── Pod pas-ghi`,
+  visual:`<svg viewBox="0 0 440 200" xmlns="http://www.w3.org/2000/svg"><defs><marker id="a" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="#8fa3c8"/></marker></defs><rect x="150" y="15" width="140" height="44" rx="8" fill="#121c30" stroke="#4a7cf7" stroke-width="2"/><text x="220" y="33" font-size="12" fill="#4a7cf7" text-anchor="middle" font-weight="bold">Service</text><text x="220" y="50" font-size="10" fill="#8fa3c8" text-anchor="middle">pas-gw.tlx.svc.cluster.local</text><line x1="220" y1="59" x2="100" y2="85" stroke="#8fa3c8" stroke-width="1.5" marker-end="url(#a)"/><line x1="220" y1="59" x2="220" y2="85" stroke="#8fa3c8" stroke-width="1.5" marker-end="url(#a)"/><line x1="220" y1="59" x2="340" y2="85" stroke="#8fa3c8" stroke-width="1.5" marker-end="url(#a)"/><rect x="60" y="88" width="80" height="36" rx="6" fill="#070b14" stroke="#3ecf8e"/><text x="100" y="110" font-size="10" fill="#3ecf8e" text-anchor="middle">Pod pas-abc</text><rect x="180" y="88" width="80" height="36" rx="6" fill="#070b14" stroke="#3ecf8e"/><text x="220" y="110" font-size="10" fill="#3ecf8e" text-anchor="middle">Pod pas-def</text><rect x="300" y="88" width="80" height="36" rx="6" fill="#070b14" stroke="#3ecf8e"/><text x="340" y="110" font-size="10" fill="#3ecf8e" text-anchor="middle">Pod pas-ghi</text><text x="220" y="150" font-size="10" fill="#8fa3c8" text-anchor="middle">selector: app = pas  ·  ClusterIP / NodePort / LoadBalancer / ExternalName</text></svg>`,
   points:["Pods die with ephemeral IPs; the Service gives a stable IP + DNS name.",
           "ClusterIP (internal), NodePort (debug), LoadBalancer (public), ExternalName (alias).",
           "CoreDNS resolves names natively — no hosts-file maintenance."],
   sap:"Service ≈ naming via the message server (ms/…): reliable entry to moving instances."},
 
 { icon:"🌐", title:"Ingress — the L7 gateway",
-  visual:`Internet → LoadBalancer → Ingress
-  ├── sap-tlx.airbus.internal  →  pas-gw:3300
-  └── TLS terminated here (cert-manager)`,
-  points:["Receives external HTTP/HTTPS and routes by hostname + path.",
+  visual:`<svg viewBox="0 0 440 200" xmlns="http://www.w3.org/2000/svg"><defs><marker id="a" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="#8fa3c8"/></marker></defs><rect x="20" y="75" width="70" height="40" rx="8" fill="#0e1626" stroke="#8fa3c8"/><text x="55" y="99" font-size="11" fill="#d7e1f5" text-anchor="middle">Internet</text><line x1="90" y1="95" x2="120" y2="95" stroke="#8fa3c8" stroke-width="1.5" marker-end="url(#a)"/><rect x="120" y="60" width="120" height="70" rx="8" fill="#121c30" stroke="#4a7cf7" stroke-width="2"/><text x="180" y="82" font-size="12" fill="#4a7cf7" text-anchor="middle" font-weight="bold">Ingress</text><text x="180" y="100" font-size="10" fill="#8fa3c8" text-anchor="middle">TLS terminated</text><text x="180" y="116" font-size="10" fill="#3ecf8e" text-anchor="middle">🔒 cert-manager</text><line x1="240" y1="95" x2="270" y2="95" stroke="#8fa3c8" stroke-width="1.5" marker-end="url(#a)"/><rect x="270" y="75" width="80" height="40" rx="8" fill="#0e1626" stroke="#f5c542"/><text x="310" y="99" font-size="11" fill="#f5c542" text-anchor="middle">Service</text><line x1="350" y1="95" x2="380" y2="95" stroke="#8fa3c8" stroke-width="1.5" marker-end="url(#a)"/><rect x="380" y="75" width="40" height="40" rx="6" fill="#070b14" stroke="#3ecf8e"/><text x="400" y="99" font-size="10" fill="#3ecf8e" text-anchor="middle">Pod</text><text x="220" y="160" font-size="10" fill="#8fa3c8" text-anchor="middle">routes by hostname + path  ·  sap-tlx.airbus.internal → pas-gw:3300</text></svg>`,
+  points:["Receives external HTTP/HTTPS and routes by hostname and path.",
           "Terminates TLS automatically (Let's Encrypt via cert-manager).",
           "Your datacenter reverse-proxy, declarative edition."],
   sap:"Ingress ≈ the ICM/HTTP URL exposed to clients, but driven by YAML."},
 
 { icon:"🔐", title:"ConfigMap & Secret — externalized config",
-  visual:`Image (immutable)
-  + ConfigMap  (profile params, readable)
-  + Secret     (passwords, base64, via Vault)`,
+  visual:`<svg viewBox="0 0 440 200" xmlns="http://www.w3.org/2000/svg"><rect x="150" y="10" width="140" height="40" rx="8" fill="#121c30" stroke="#4a7cf7" stroke-width="2"/><text x="220" y="34" font-size="13" fill="#4a7cf7" text-anchor="middle" font-weight="bold">Image (immutable)</text><line x1="160" y1="50" x2="95" y2="80" stroke="#8fa3c8" stroke-width="1.5"/><line x1="220" y1="50" x2="220" y2="80" stroke="#8fa3c8" stroke-width="1.5"/><line x1="280" y1="50" x2="345" y2="80" stroke="#8fa3c8" stroke-width="1.5"/><rect x="40" y="80" width="110" height="60" rx="8" fill="#0e1626" stroke="#3ecf8e"/><text x="95" y="100" font-size="11" fill="#3ecf8e" text-anchor="middle" font-weight="bold">ConfigMap</text><text x="95" y="116" font-size="9" fill="#8fa3c8" text-anchor="middle">profile params</text><text x="95" y="130" font-size="9" fill="#8fa3c8" text-anchor="middle">readable config</text><rect x="165" y="80" width="110" height="60" rx="8" fill="#0e1626" stroke="#f5c542"/><text x="220" y="100" font-size="11" fill="#f5c542" text-anchor="middle" font-weight="bold">Secret</text><text x="220" y="116" font-size="9" fill="#8fa3c8" text-anchor="middle">passwords, keys</text><text x="220" y="130" font-size="9" fill="#8fa3c8" text-anchor="middle">base64 (via Vault)</text><rect x="290" y="80" width="110" height="60" rx="8" fill="#0e1626" stroke="#8fa3c8"/><text x="345" y="100" font-size="11" fill="#8fa3c8" text-anchor="middle" font-weight="bold">Pod</text><text x="345" y="116" font-size="9" fill="#8fa3c8" text-anchor="middle">mounts both</text><text x="345" y="130" font-size="9" fill="#8fa3c8" text-anchor="middle">as env / volume</text><text x="220" y="170" font-size="10" fill="#8fa3c8" text-anchor="middle">injected at startup — never hard-coded</text></svg>`,
   points:["Golden rule: one immutable image; config is injected at startup.",
           "ConfigMap = readable config; Secret = sensitive data.",
           "A Secret is NOT encrypted in etcd by default — use an external vault."],
   sap:"ConfigMap ≈ SAP instance profiles; Secret ≈ SECSTORE / DB keys."},
 
 { icon:"🏃", title:"StatefulSet — the SAP case",
-  visual:`StatefulSet: hana
-  ├── hana-0  (primary)   + PVC-0
-  ├── hana-1  (secondary) + PVC-1
-  └── podAntiAffinity: never on the same node`,
+  visual:`<svg viewBox="0 0 440 200" xmlns="http://www.w3.org/2000/svg"><text x="220" y="20" font-size="13" fill="#4a7cf7" text-anchor="middle" font-weight="bold">StatefulSet: hana (replicas: 2)</text><rect x="40" y="35" width="170" height="70" rx="8" fill="#121c30" stroke="#4a7cf7"/><text x="125" y="55" font-size="12" fill="#4a7cf7" text-anchor="middle" font-weight="bold">hana-0 (primary)</text><rect x="55" y="65" width="140" height="30" rx="5" fill="#070b14" stroke="#f5c542"/><text x="125" y="84" font-size="10" fill="#f5c542" text-anchor="middle">PVC-0 (1 Ti)</text><rect x="230" y="35" width="170" height="70" rx="8" fill="#121c30" stroke="#4a7cf7"/><text x="315" y="55" font-size="12" fill="#4a7cf7" text-anchor="middle" font-weight="bold">hana-1 (secondary)</text><rect x="245" y="65" width="140" height="30" rx="5" fill="#070b14" stroke="#f5c542"/><text x="315" y="84" font-size="10" fill="#f5c542" text-anchor="middle">PVC-1 (1 Ti)</text><text x="220" y="125" font-size="11" fill="#ff6b6b" text-anchor="middle">podAntiAffinity: never on the same node</text><rect x="40" y="135" width="360" height="45" rx="8" fill="#0e1626" stroke="#2a3a5f"/><text x="220" y="153" font-size="11" fill="#8fa3c8" text-anchor="middle">headless Service → hana-0.hana.tlx.svc.cluster.local</text><text x="220" y="170" font-size="10" fill="#8fa3c8" text-anchor="middle">ordered startup: hana-0 first, then hana-1 (HSR)</text></svg>`,
   points:["Fixed, persistent identity: named pods, ordered startup, dedicated storage per replica.",
           "Use it for anything with a “personality” (HANA, ASCS/ERS).",
           "Headless Service gives per-pod DNS: hana-0.hana.tlx.svc.cluster.local."],
   sap:"StatefulSet ≈ a named SAP instance; Pacemaker constraints become affinity."},
 
 { icon:"💾", title:"PersistentVolume — storage that survives",
-  visual:`Pod → PVC (request) → PV (real disk) ← StorageClass (policy)
-Access modes: RWO (1 node) / ROX (many read) / RWX (many read-write)`,
+  visual:`<svg viewBox="0 0 440 200" xmlns="http://www.w3.org/2000/svg"><defs><marker id="a" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="#8fa3c8"/></marker></defs><rect x="20" y="70" width="60" height="40" rx="6" fill="#070b14" stroke="#3ecf8e"/><text x="50" y="94" font-size="10" fill="#3ecf8e" text-anchor="middle">Pod</text><line x1="80" y1="90" x2="105" y2="90" stroke="#8fa3c8" stroke-width="1.5" marker-end="url(#a)"/><rect x="105" y="70" width="70" height="40" rx="6" fill="#0e1626" stroke="#f5c542"/><text x="140" y="88" font-size="10" fill="#f5c542" text-anchor="middle">PVC</text><text x="140" y="102" font-size="9" fill="#8fa3c8" text-anchor="middle">request</text><line x1="175" y1="90" x2="200" y2="90" stroke="#8fa3c8" stroke-width="1.5" marker-end="url(#a)"/><rect x="200" y="70" width="70" height="40" rx="6" fill="#0e1626" stroke="#4a7cf7"/><text x="235" y="88" font-size="10" fill="#4a7cf7" text-anchor="middle">PV</text><text x="235" y="102" font-size="9" fill="#8fa3c8" text-anchor="middle">real disk</text><line x1="270" y1="90" x2="295" y2="90" stroke="#8fa3c8" stroke-width="1.5" marker-end="url(#a)"/><rect x="295" y="70" width="90" height="40" rx="6" fill="#0e1626" stroke="#8fa3c8"/><text x="340" y="88" font-size="10" fill="#8fa3c8" text-anchor="middle">StorageClass</text><text x="340" y="102" font-size="9" fill="#8fa3c8" text-anchor="middle">policy</text><rect x="60" y="130" width="320" height="45" rx="8" fill="#0e1626" stroke="#2a3a5f"/><text x="220" y="148" font-size="10" fill="#d7e1f5" text-anchor="middle">RWO = 1 node r/w   ·   ROX = many read   ·   RWX = many r/w</text><text x="220" y="165" font-size="10" fill="#8fa3c8" text-anchor="middle">RWX PVC = shared /usr/sap/trans</text></svg>`,
   points:["Pod storage is ephemeral; databases need a persistent volume.",
           "PVC = the app's request; PV = the cluster's resource; StorageClass = the policy.",
           "RWX (NFS-style) is the answer for shared /usr/sap/trans."],
   sap:"PVC ≈ your dedicated DB volume; RWX PVC ≈ the shared transport directory."},
 
 { icon:"🛂", title:"RBAC — who can do what",
-  visual:`Role (namespace) + RoleBinding  →  user/group
-ClusterRole + ClusterRoleBinding  →  cluster-wide
-ServiceAccount  →  a pod's identity`,
+  visual:`<svg viewBox="0 0 440 200" xmlns="http://www.w3.org/2000/svg"><defs><marker id="a" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="#8fa3c8"/></marker></defs><rect x="20" y="20" width="90" height="36" rx="8" fill="#0e1626" stroke="#f5c542"/><text x="65" y="42" font-size="11" fill="#f5c542" text-anchor="middle">User</text><line x1="110" y1="38" x2="135" y2="38" stroke="#8fa3c8" stroke-width="1.5" marker-end="url(#a)"/><rect x="135" y="20" width="100" height="36" rx="8" fill="#121c30" stroke="#4a7cf7"/><text x="185" y="42" font-size="11" fill="#4a7cf7" text-anchor="middle">RoleBinding</text><line x1="235" y1="38" x2="260" y2="38" stroke="#8fa3c8" stroke-width="1.5" marker-end="url(#a)"/><rect x="260" y="20" width="80" height="36" rx="8" fill="#0e1626" stroke="#3ecf8e"/><text x="300" y="42" font-size="11" fill="#3ecf8e" text-anchor="middle">Role</text><text x="300" y="72" font-size="10" fill="#8fa3c8" text-anchor="middle">(namespace scope)</text><rect x="20" y="110" width="90" height="36" rx="8" fill="#0e1626" stroke="#f5c542"/><text x="65" y="132" font-size="11" fill="#f5c542" text-anchor="middle">Pod</text><line x1="110" y1="128" x2="135" y2="128" stroke="#8fa3c8" stroke-width="1.5" marker-end="url(#a)"/><rect x="135" y="110" width="120" height="36" rx="8" fill="#121c30" stroke="#4a7cf7"/><text x="195" y="132" font-size="11" fill="#4a7cf7" text-anchor="middle">ServiceAccount</text><text x="195" y="162" font-size="10" fill="#8fa3c8" text-anchor="middle">a pod's identity (process, not person)</text><rect x="280" y="110" width="120" height="36" rx="8" fill="#0e1626" stroke="#8fa3c8" stroke-dasharray="4 3"/><text x="340" y="132" font-size="10" fill="#8fa3c8" text-anchor="middle">ClusterRole</text><text x="340" y="162" font-size="10" fill="#8fa3c8" text-anchor="middle">(cluster-wide)</text></svg>`,
   points:["Every action goes through the API server and is checked by RBAC.",
           "Role/RoleBinding = namespace scope; ClusterRole = cluster scope.",
           "ServiceAccount = the identity of a process, not a person."],
   sap:"RBAC ≈ PFCG roles and authorizations — but versioned in YAML."},
 
 { icon:"⚖️", title:"Resources & scheduling",
-  visual:`requests = guaranteed (scheduler uses these)
-limits   = ceiling (CPU throttles, memory kills)
-QoS: Guaranteed (req=lim) > Burstable > BestEffort`,
+  visual:`<svg viewBox="0 0 440 200" xmlns="http://www.w3.org/2000/svg"><text x="220" y="18" font-size="12" fill="#8fa3c8" text-anchor="middle">Node capacity</text><rect x="40" y="25" width="360" height="22" rx="5" fill="#0e1626" stroke="#2a3a5f"/><rect x="40" y="25" width="260" height="22" rx="5" fill="#4a7cf7" opacity=".7"/><text x="170" y="40" font-size="10" fill="#fff" text-anchor="middle">requests (guaranteed)</text><rect x="300" y="25" width="60" height="22" rx="0" fill="#f5c542" opacity=".6"/><text x="330" y="40" font-size="9" fill="#070b14" text-anchor="middle">limits</text><text x="40" y="62" font-size="10" fill="#8fa3c8">requests = scheduler's promise  ·  limits = hard ceiling (CPU throttles, memory kills → OOMKilled)</text><rect x="40" y="80" width="110" height="55" rx="8" fill="#0e1626" stroke="#3ecf8e"/><text x="95" y="100" font-size="11" fill="#3ecf8e" text-anchor="middle" font-weight="bold">Guaranteed</text><text x="95" y="116" font-size="9" fill="#8fa3c8" text-anchor="middle">req = lim</text><text x="95" y="128" font-size="9" fill="#8fa3c8" text-anchor="middle">HANA, ASCS</text><rect x="165" y="80" width="110" height="55" rx="8" fill="#0e1626" stroke="#f5c542"/><text x="220" y="100" font-size="11" fill="#f5c542" text-anchor="middle" font-weight="bold">Burstable</text><text x="220" y="116" font-size="9" fill="#8fa3c8" text-anchor="middle">req &lt; lim</text><text x="220" y="128" font-size="9" fill="#8fa3c8" text-anchor="middle">PAS, tools</text><rect x="290" y="80" width="110" height="55" rx="8" fill="#0e1626" stroke="#ff6b6b"/><text x="345" y="100" font-size="11" fill="#ff6b6b" text-anchor="middle" font-weight="bold">BestEffort</text><text x="345" y="116" font-size="9" fill="#8fa3c8" text-anchor="middle">no requests</text><text x="345" y="128" font-size="9" fill="#8fa3c8" text-anchor="middle">avoid for SAP</text><text x="220" y="160" font-size="10" fill="#8fa3c8" text-anchor="middle">placement: nodeSelector · podAntiAffinity · taints / tolerations</text></svg>`,
   points:["requests = what the scheduler guarantees; limits = the hard ceiling.",
           "Exceeding the memory limit → OOMKill (exit 137).",
           "nodeSelector, podAntiAffinity, taints/tolerations control placement."],
   sap:"requests/limits ≈ kernel & JVM memory settings, declared per instance in YAML."},
 
 { icon:"📈", title:"HPA — autoscaling",
-  visual:`Deployment (3 replicas)
-  ↑ metrics (CPU > 70%)
-  └── HPA adds replicas automatically`,
-  points:["Scales replicas up/down on metrics (CPU, memory, custom).",
+  visual:`<svg viewBox="0 0 440 200" xmlns="http://www.w3.org/2000/svg"><defs><marker id="a" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="#8fa3c8"/></marker></defs><rect x="40" y="70" width="110" height="50" rx="8" fill="#121c30" stroke="#4a7cf7" stroke-width="2"/><text x="95" y="92" font-size="11" fill="#4a7cf7" text-anchor="middle" font-weight="bold">Deployment</text><text x="95" y="108" font-size="10" fill="#8fa3c8" text-anchor="middle">3 replicas</text><rect x="200" y="60" width="110" height="70" rx="8" fill="#0e1626" stroke="#f5c542"/><text x="255" y="82" font-size="11" fill="#f5c542" text-anchor="middle" font-weight="bold">HPA</text><text x="255" y="100" font-size="9" fill="#8fa3c8" text-anchor="middle">CPU &gt; 70% ?</text><text x="255" y="116" font-size="9" fill="#8fa3c8" text-anchor="middle">scale up / down</text><line x1="150" y1="95" x2="200" y2="95" stroke="#8fa3c8" stroke-width="1.5" marker-end="url(#a)"/><line x1="310" y1="95" x2="350" y2="95" stroke="#8fa3c8" stroke-width="1.5" marker-end="url(#a)"/><rect x="350" y="75" width="60" height="40" rx="6" fill="#070b14" stroke="#3ecf8e"/><text x="380" y="99" font-size="10" fill="#3ecf8e" text-anchor="middle">+ Pods</text><text x="220" y="165" font-size="10" fill="#8fa3c8" text-anchor="middle">reacts to load instantly — no human operator needed</text></svg>`,
+  points:["Scales replicas up and down on metrics (CPU, memory, custom).",
           "Works with Deployments and StatefulSets.",
           "The cluster reacts to load the way a human operator would — but instantly."],
   sap:"HPA ≈ dynamic resource adjustment, but at application level, automatic."},
 
 { icon:"🔧", title:"Troubleshooting — the field guide",
-  visual:`1. kubectl get pods | grep -v Running
-2. kubectl describe pod  → Events
-3. kubectl logs --previous
-4. kubectl top nodes/pods
-5. kubectl get events --sort-by`,
-  points:["ImagePullBackOff → image/registry/auth issue.",
+  visual:`<svg viewBox="0 0 440 200" xmlns="http://www.w3.org/2000/svg"><defs><marker id="a" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="#8fa3c8"/></marker></defs><rect x="40" y="15" width="150" height="32" rx="6" fill="#0e1626" stroke="#8fa3c8"/><text x="115" y="35" font-size="10" fill="#d7e1f5" text-anchor="middle">1. get pods | grep -v Running</text><line x1="115" y1="47" x2="115" y2="58" stroke="#8fa3c8" stroke-width="1.5" marker-end="url(#a)"/><rect x="40" y="60" width="150" height="32" rx="6" fill="#0e1626" stroke="#8fa3c8"/><text x="115" y="80" font-size="10" fill="#d7e1f5" text-anchor="middle">2. describe pod → Events</text><line x1="115" y1="92" x2="115" y2="103" stroke="#8fa3c8" stroke-width="1.5" marker-end="url(#a)"/><rect x="40" y="105" width="150" height="32" rx="6" fill="#0e1626" stroke="#8fa3c8"/><text x="115" y="125" font-size="10" fill="#d7e1f5" text-anchor="middle">3. logs --previous</text><line x1="115" y1="137" x2="115" y2="148" stroke="#8fa3c8" stroke-width="1.5" marker-end="url(#a)"/><rect x="40" y="150" width="150" height="32" rx="6" fill="#0e1626" stroke="#8fa3c8"/><text x="115" y="170" font-size="10" fill="#d7e1f5" text-anchor="middle">4. top nodes / pods</text><rect x="230" y="20" width="170" height="160" rx="8" fill="#121c30" stroke="#2a3a5f"/><text x="315" y="40" font-size="11" fill="#4a7cf7" text-anchor="middle" font-weight="bold">Status → cause</text><text x="240" y="60" font-size="10" fill="#ff6b6b">ImagePullBackOff</text><text x="400" y="60" font-size="9" fill="#8fa3c8" text-anchor="end">image / registry</text><text x="240" y="80" font-size="10" fill="#ff6b6b">CrashLoopBackOff</text><text x="400" y="80" font-size="9" fill="#8fa3c8" text-anchor="end">config error</text><text x="240" y="100" font-size="10" fill="#ff6b6b">OOMKilled (137)</text><text x="400" y="100" font-size="9" fill="#8fa3c8" text-anchor="end">memory limit</text><text x="240" y="120" font-size="10" fill="#ff6b6b">Pending</text><text x="400" y="120" font-size="9" fill="#8fa3c8" text-anchor="end">no node fits</text><text x="240" y="140" font-size="10" fill="#ff6b6b">ContainerCreating</text><text x="400" y="140" font-size="9" fill="#8fa3c8" text-anchor="end">volume stuck</text><text x="315" y="170" font-size="9" fill="#8fa3c8" text-anchor="middle">Events tell you why</text></svg>`,
+  points:["ImagePullBackOff → image / registry / auth issue.",
           "CrashLoopBackOff → process crashes in a loop (check logs --previous).",
           "OOMKilled (137) → memory limit exceeded.",
-          "Pending → scheduler found no node (resources/affinity/taint)."],
+          "Pending → scheduler found no node (resources / affinity / taint)."],
   sap:"The same diagnosis flow as Basis — but the cluster tells you why in the Events."},
 
 { icon:"🗺️", title:"SAP → Kubernetes — the big picture",
-  visual:`SID  →  Namespace
-ASCS →  StatefulSet + Service
-PAS  →  Deployment (rolling)
-HANA →  StatefulSet + PVC
-PFCG →  RBAC
-CTS+ →  Git + GitOps`,
+  visual:`<svg viewBox="0 0 440 200" xmlns="http://www.w3.org/2000/svg"><rect x="20" y="15" width="195" height="170" rx="10" fill="#121c30" stroke="#f5c542"/><text x="117" y="35" font-size="12" fill="#f5c542" text-anchor="middle" font-weight="bold">SAP world</text><text x="35" y="58" font-size="11" fill="#d7e1f5">SID</text><text x="35" y="78" font-size="11" fill="#d7e1f5">ASCS / SCS</text><text x="35" y="98" font-size="11" fill="#d7e1f5">PAS</text><text x="35" y="118" font-size="11" fill="#d7e1f5">HANA</text><text x="35" y="138" font-size="11" fill="#d7e1f5">PFCG</text><text x="35" y="158" font-size="11" fill="#d7e1f5">CTS+ transports</text><rect x="225" y="15" width="195" height="170" rx="10" fill="#121c30" stroke="#4a7cf7"/><text x="322" y="35" font-size="12" fill="#4a7cf7" text-anchor="middle" font-weight="bold">Kubernetes</text><text x="240" y="58" font-size="11" fill="#d7e1f5">Namespace</text><text x="240" y="78" font-size="11" fill="#d7e1f5">StatefulSet + Service</text><text x="240" y="98" font-size="11" fill="#d7e1f5">Deployment (rolling)</text><text x="240" y="118" font-size="11" fill="#d7e1f5">StatefulSet + PVC</text><text x="240" y="138" font-size="11" fill="#d7e1f5">RBAC</text><text x="240" y="158" font-size="11" fill="#d7e1f5">Git + GitOps</text><text x="220" y="196" font-size="10" fill="#8fa3c8" text-anchor="middle">70% of your reflexes survive — you are translating, not learning</text></svg>`,
   points:["70% of your Basis reflexes survive the migration.",
           "The other 30% is vocabulary: a new name for each familiar concept.",
           "Everything is declarative, versioned and reproducible."],
