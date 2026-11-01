@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>SAP → Kubernetes · Cours — Les concepts essentiels</title>
+<title>SAP → Kubernetes · Course — The essential concepts</title>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><circle cx='16' cy='16' r='15' fill='%230A6ED1'/><text x='16' y='22' font-size='17' text-anchor='middle' fill='white' font-family='Arial' font-weight='bold'>K</text></svg>">
 <style>
 :root{
@@ -118,10 +118,10 @@ pre{background:#04070d;border:1px solid var(--line2);border-radius:0 0 10px 10px
     <span class="brand-mark">K</span>
     <span class="brand-txt"><b>Operation TLX</b><em>SAP → Kubernetes</em></span>
   </a>
-  <span class="tag">📘 Cours</span>
+  <span class="tag">📘 Course</span>
   <div class="spacer"></div>
-  <input id="search" class="search" type="search" placeholder="Rechercher un concept… (ex : StatefulSet, HANA, PVC)">
-  <a class="backlink" href="index.html">← Retour au jeu</a>
+  <input id="search" class="search" type="search" placeholder="Search a concept… (e.g. StatefulSet, HANA, PVC)">
+  <a class="backlink" href="index.html">← Back to the game</a>
 </header>
 
 <div class="layout">
@@ -131,76 +131,76 @@ pre{background:#04070d;border:1px solid var(--line2);border-radius:0 0 10px 10px
 
 <script>
 /* ================================================================
-   COURS — Concepts Kubernetes pour administrateurs SAP
-   Schéma des blocs :
-     {p:"..."}            paragraphe
-     {lead:"..."}         chapô
-     {dim:"..."}          note en second plan
-     {h:"...", sub:"..."} sous-titre
-     {ul:[...]}           liste à puces (HTML accepté)
-     {tip:"..."} / {warn:"..."} / {map:"..."}   encarts
-     {code:"bash", t:"titre", src:`...`}        bloc de code copiable
-     {tbl:[[en-têtes…], [ligne…]]}              tableau
-     {panels:[{cls,h,list:[[terme,desc]]}]}     2 colonnes papiers
-     {cards:[{h,t}]} / {cards3:[{h,t}]}         cartes
+   COURSE — Kubernetes concepts for SAP administrators
+   Block schema:
+     {p:"..."}            paragraph
+     {lead:"..."}         chapter intro
+     {dim:"..."}          side note
+     {h:"...", sub:"..."} sub-heading
+     {ul:[...]}           bullet list (HTML allowed)
+     {tip:"..."} / {warn:"..."} / {map:"..."}   callouts
+     {code:"bash", t:"title", src:`...`}        copyable code block
+     {tbl:[[headers…], [row…]]}                 table
+     {panels:[{cls,h,list:[[term,desc]]}]}      two column panels
+     {cards:[{h,t}]} / {cards3:[{h,t}]}         cards
    ================================================================ */
 const CHAPTERS = [
 
 /* ---------------- 1 ---------------- */
-{ title:"Pourquoi Kubernetes ?", icon:"🌍", blocks:[
-  {lead:"Pendant des années, vous avez hébergé SAP sur des serveurs que vous choyiez comme des animaux de compagnie. Kubernetes inverse la logique : les serveurs deviennent du bétail — anonymes, remplaçables, reconstruits à l'identique."},
-  {h:"Le fonctionnement classique à changer", t:"Un paysage SAP 3-tiers installé à l'ancienne, c'est :"},
-  {ul:[ "<b>ASCS/SCS</b> : le cerveau central (message server + enqueue) — bascule manuelle ou Pacemaker en cas de panne",
-        "<b>PAS</b> : application server primaire, souvent sur une VM dédiée",
-        "<b>HANA</b> : base de données, avec réplication système (HSR) + cluster Pacemaker, SBD, watchdog…",
-        "Des heures de runbooks manuels pour un simple patch : stop ordonné, sauvegarde, upgrade, redémarrage, tests…"]},
-  {p:"L'orchestrateur fait ce que faisait votre runbook : placer, surveiller, redémarrer, déplacer, mettre à jour — mais <b>toutes les X secondes</b>, sur des centaines d'applications, et toujours de la même manière."},
+{ title:"Why Kubernetes?", icon:"🌍", blocks:[
+  {lead:"For years you have hosted SAP on servers you pampered like pets. Kubernetes flips the logic: servers become cattle — anonymous, replaceable, rebuilt identically."},
+  {h:"What the classic setup looks like", sub:"A traditionally installed 3-tier SAP landscape is:"},
+  {ul:[ "<b>ASCS/SCS</b>: the central brain (message server + enqueue) — manual failover or Pacemaker when it breaks",
+        "<b>PAS</b>: the primary application server, usually on its own dedicated VM",
+        "<b>HANA</b>: the database, with system replication (HSR) + a Pacemaker cluster, SBD, watchdogs…",
+        "Hours of manual runbooks for a simple patch: ordered shutdown, backup, upgrade, restart, tests…"]},
+  {p:"The orchestrator does what your runbook used to do: place, monitor, restart, move, update — but <b>every few seconds</b>, across hundreds of applications, always the same way."},
   {cards:[
-    {h:"Pet → Cattle", t:"Un serveur n'est plus unique : sa perte est un non-évènement, le système recrée son remplaçant."},
-    {h:"Déclaratif", t:"Vous décrivez l'état désiré (3 instances, 16 Go, cette image). Aucun clic : la plateforme converge."},
-    {h:"API universelle", t:"Tout ce qui tourne se pilote par la même API : votre runbook devient du code versionné."}]},
-  {map:"<b>Équivalence SAP.</b> Pacemaker + scripts de bascule + documentation d'administration ≈ kube-scheduler + controller-manager + opérateurs. La différence : Kubernetes pilote aussi le stockage, le réseau et les secrets, pas seulement les services."},
-  {tip:"Chez Airbus, la migration QA (SID TLX) puis production (TXP) vers Kubernetes ne gomme pas votre expertise : environ 70 % de vos réflexes Basis restent valides. Le reste, ce cours et le jeu vont le traduire."}
+    {h:"Pet → Cattle", t:"A server is no longer unique: losing it is a non-event, the system rebuilds its replacement."},
+    {h:"Declarative", t:"You describe the desired state (3 instances, 16 GB, this image). No clicks: the platform converges."},
+    {h:"Universal API", t:"Everything that runs is driven through the same API: your runbook becomes versioned code."}]},
+  {map:"<b>SAP translation.</b> Pacemaker + failover scripts + admin documentation ≈ kube-scheduler + controller-manager + operators. The difference: Kubernetes also drives storage, networking and secrets — not just services."},
+  {tip:"At Airbus, migrating QA (SID TLX) then production (TXP) to Kubernetes does not erase your expertise: about 70% of your Basis reflexes remain valid. This course and the game will translate the rest."}
 ]},
 
 /* ---------------- 2 ---------------- */
-{ title:"Architecture d'un cluster", icon:"🏗️", blocks:[
-  {p:"Un cluster Kubernetes = un cerveau (<b>control plane</b>) + des muscles (<b>nodes</b>). Comme dans un paysage SAP : l'ASCS décide, les application servers exécutent."},
+{ title:"Cluster architecture", icon:"🏗️", blocks:[
+  {p:"A Kubernetes cluster = a brain (<b>control plane</b>) + muscles (<b>nodes</b>). Just like an SAP landscape: the ASCS decides, the application servers execute."},
   {panels:[
-    {cls:"ui", h:"Control plane — le « ASCS du cluster »", list:[
-      ["kube-apiserver","La porte d'entrée unique : HTTPS/REST, authentifie et valide chaque requête. C'est LUI le cluster."],
-      ["etcd","La mémoire (base clé-valeur) : liste des pods, config, secrets. Sauvegarder etcd = sauvegarder le cluster."],
-      ["kube-scheduler","Le placeur : choisit sur quel node tourne chaque pod (CPU/RAM, affinité, contraintes)."],
-      ["controller-manager","Les boucles de réconciliation : « l'état réel ≠ état désiré ? → corriger ». En continu."]]},
-    {cls:"wk", h:"Node — le serveur de travail", list:[
-      ["kubelet","L'agent : dialogue avec l'API, démarre les conteneurs, applique les health checks. Votre équivalent sapstart."],
-      ["kube-proxy","Le routage du trafic réseau vers les pods (règles iptables/eBPF)."],
-      ["container runtime","containerd / CRI-O : exécute les images. Docker n'est plus requis."],
-      ["addons","CNI (réseau), CSI (stockage), CoreDNS (résolution de noms), metrics-server."]]}]},
-  {warn:"<b>Ne jamais SSH sur un node control-plane les mains dans les poches.</b> On ne bricole pas le cerveau : tout passe par l'API server, seul composant autorisé à écrire dans etcd."},
-  {code:"bash", t:"Voir l'état d'un cluster (le premier geste de chaque matin)", src:
-`# Le « SAPGUI » de Kubernetes : un seul outil, tout le système
-kubectl get nodes                     # les serveurs et leur statut
+    {cls:"ui", h:"Control plane — the “ASCS of the cluster”", list:[
+      ["kube-apiserver","The single front door: HTTPS/REST, authenticates and validates every request. IT is the cluster."],
+      ["etcd","The memory (key-value store): the list of pods, config, secrets. Backing up etcd = backing up the cluster."],
+      ["kube-scheduler","The placer: decides which node runs each pod (CPU/RAM, affinity, constraints)."],
+      ["controller-manager","The reconciliation loops: “actual state ≠ desired state? → correct”. Continuously."]]},
+    {cls:"wk", h:"Node — the worker server", list:[
+      ["kubelet","The agent: talks to the API, starts containers, runs health checks. Your equivalent of sapstart."],
+      ["kube-proxy","Routes network traffic to the pods (iptables/eBPF rules)."],
+      ["container runtime","containerd / CRI-O: runs the images. Docker is no longer required."],
+      ["addons","CNI (network), CSI (storage), CoreDNS (name resolution), metrics-server."]]}]},
+  {warn:"<b>Never SSH into a control-plane node to tinker.</b> You do not hack at the brain: everything goes through the API server, the only component allowed to write to etcd."},
+  {code:"bash", t:"Check a cluster's health (every morning's first move)", src:
+`# The "SAPGUI" of Kubernetes: one tool, the whole system
+kubectl get nodes                     # the servers and their status
 kubectl get nodes -o wide             # + version, OS, IP
-kubectl top nodes                     # consommation CPU/RAM
-kubectl describe node <node>          # détails techniques`},
-  {map:"<b>Équivalence SAP.</b> Cluster Kubernetes ≈ votre datacenter physique entier. Node ≈ un hôte VM. Control plane ≈ ASCS + MDC du paysage. kubelet ≈ sapstart + sapcontrol."}
+kubectl top nodes                     # CPU/RAM usage
+kubectl describe node <node>          # technical details`},
+  {map:"<b>SAP translation.</b> Kubernetes cluster ≈ your entire physical datacenter. Node ≈ one VM host. Control plane ≈ the ASCS + database of the landscape. kubelet ≈ sapstart + sapcontrol."}
 ]},
 
 /* ---------------- 3 ---------------- */
-{ title:"L'API et le déclaratif", icon:"📜", blocks:[
-  {lead:"Le principe fondateur : vous ne dites pas « fais ceci ». Vous décrivez <b>l'état désiré</b>, et le cluster s'arrange pour s'y tenir — en permanence."},
-  {h:"Un manifest = une carte d'identité", t:"Tout objet Kubernetes est du YAML avec 4 sections :"},
-  {code:"yaml", t:"Anatomie d'un objet Kubernetes", src:
-`apiVersion: apps/v1        # quelle API / génération
-kind: Deployment           # le type d'objet
-metadata:                  # qui est-il ?
+{ title:"The API and the declarative model", icon:"📜", blocks:[
+  {lead:"The founding principle: you do not say “do this”. You describe the <b>desired state</b>, and the cluster keeps it that way — permanently."},
+  {h:"A manifest = an ID card", sub:"Every Kubernetes object is YAML with 4 sections:"},
+  {code:"yaml", t:"Anatomy of a Kubernetes object", src:
+`apiVersion: apps/v1        # which API / generation
+kind: Deployment           # the object type
+metadata:                  # who is it?
   name: pas-tlx
-  namespace: tlx           # le SID auquel il appartient
+  namespace: tlx           # the SID it belongs to
   labels:
     app: sap-pas
-spec:                      # ce que je VEUX
-  replicas: 3              # 3 instances du PAS
+spec:                      # what I WANT
+  replicas: 3              # 3 PAS instances
   selector:
     matchLabels:
       app: sap-pas
@@ -209,42 +209,42 @@ spec:                      # ce que je VEUX
       containers:
       - name: pas
         image: registry.airbus.internal/sap/pas:latest`},
-  {p:"Vos commandes passées à la main deviennent des <b>fichiers</b> : versionnés dans Git, relisibles, revus par diff. C'est ce qu'on appelle le <b>GitOps</b>."},
-  {code:"bash", t:"Le trio à connaître", src:
-`kubectl apply -f pas.yaml      # déclarer / mettre à jour (idempotent)
-kubectl get deployments        # vérifier ce qui tourne
-kubectl delete -f pas.yaml     # retirer l'objet`},
-  {tip:"« <code>apply</code> » est <b>idempotent</b> : relancer 10 fois le même fichier donne le même résultat. C'est le Graal de l'exploitation SAP — plus de « attendez, j'ai déjà patché ça, ou pas ? »."},
-  {map:"<b>Équivalence SAP.</b> Un manifest YAML ≈ votre paramétrage SAP (profils d'instance, autologon, table TVARVC) — mais en dehors de l'instance : versionné, relisible, testable."}
+  {p:"Your hand-typed commands become <b>files</b>: versioned in Git, reviewable, approved by diff. That is what people call <b>GitOps</b>."},
+  {code:"bash", t:"The trio to know", src:
+`kubectl apply -f pas.yaml      # declare / update (idempotent)
+kubectl get deployments        # check what is running
+kubectl delete -f pas.yaml     # remove the object`},
+  {tip:"“<code>apply</code>” is <b>idempotent</b>: running the same file 10 times yields the same result. The holy grail of SAP operations — no more “wait, did I already patch this or not?”."},
+  {map:"<b>SAP translation.</b> A YAML manifest ≈ your SAP configuration (instance profiles, autologon, table TVARVC) — but outside the instance: versioned, reviewable, testable."}
 ]},
 
 /* ---------------- 4 ---------------- */
-{ title:"Namespaces : vos SIDs deviennent des périmètres", icon:"📦", blocks:[
-  {p:"Un <b>namespace</b> = un compartiment de nommage, de quotas et de droits. Chez Airbus, un SID = un namespace. Tous les objets du système TLX vivent dans <code>tlx</code>."},
-  {code:"bash", t:"Circuler entre les SIDs (namespaces)", src:
-`kubectl get namespaces                 # la liste des SIDs
-kubectl get pods -n tlx                # tout ce qui tourne dans TLX
-kubectl config set-context --current --namespace=tlx   # se « loger » dans TLX`},
+{ title:"Namespaces: your SIDs become perimeters", icon:"📦", blocks:[
+  {p:"A <b>namespace</b> = a compartment for names, quotas and rights. At Airbus, one SID = one namespace. Every object of the TLX system lives in <code>tlx</code>."},
+  {code:"bash", t:"Moving between SIDs (namespaces)", src:
+`kubectl get namespaces                 # the list of SIDs
+kubectl get pods -n tlx                # everything running in TLX
+kubectl config set-context --current --namespace=tlx   # "log into" TLX`},
   {cards:[
-    {h:"Isolation de noms", t:"Le pod <code>pas</code> du namespace <code>tlx</code> et celui de <code>txp</code> coexistent sans conflit."},
-    {h:"Isolation de droits (RBAC)", t:"L'équipe QA n'a accès qu'à <code>tlx</code> ; l'équipe prod qu'à <code>txp</code>."},
-    {h:"Isolation de ressources", t:"ResourceQuota : TLX ne peut pas manger les ressources de TXP."}]},
-  {warn:"Un namespace isole les <b>objets</b>, pas le réseau ni le stockage par défaut. Un pod de <code>tlx</code> peut joindre un pod de <code>txp</code> sans une politique réseau (NetworkPolicy) explicite."},
-  {map:"<b>Équivalence SAP.</b> Namespace ≈ SID + client SAP + cluster système, fusionnés en un seul concept : <code>namespace tlx</code> ≈ votre QA avec son client 100."}
+    {h:"Name isolation", t:"The pod <code>pas</code> in namespace <code>tlx</code> and the one in <code>txp</code> coexist without conflict."},
+    {h:"Rights isolation (RBAC)", t:"The QA team only accesses <code>tlx</code>; the prod team only <code>txp</code>."},
+    {h:"Resource isolation", t:"ResourceQuota: TLX cannot eat TXP's resources."}]},
+  {warn:"A namespace isolates <b>objects</b>, not the network or storage by default. A pod in <code>tlx</code> can reach a pod in <code>txp</code> unless an explicit NetworkPolicy forbids it."},
+  {map:"<b>SAP translation.</b> Namespace ≈ SID + SAP client + system group, merged into a single concept: <code>namespace tlx</code> ≈ your QA system with its client 100."}
 ]},
 
 /* ---------------- 5 ---------------- */
-{ title:"Pod : l'unité d'exécution", icon:"🫧", blocks:[
-  {lead:"Le <b>pod</b> est la plus petite unité que Kubernetes déploie : un ou plusieurs conteneurs qui partagent réseau, stockage éphémère et cycle de vie."},
+{ title:"Pod: the unit of execution", icon:"🫧", blocks:[
+  {lead:"The <b>pod</b> is the smallest unit Kubernetes deploys: one or more containers sharing network, ephemeral storage and lifecycle."},
   {cards:[
-    {h:"Un Pod = une instance applicative", t:"Une instance PAS, un kernel HANA, un sidecar de logs. Un conteneur n'est PAS une application : un pod parfois plusieurs les embarquent."},
-    {h:"Un Pod = mortel", t:"Un pod peut mourir à tout instant (crash, node en panne, mise à jour, autoscaling). Ne vous attachez jamais à son nom : il contient un identifiant aléatoire."}]},
-  {h:"Les 3 sondes de santé", t:"Pour que le control plane sache si votre application est utilisable :"},
-  {tbl:[["Sonde","À quoi elle sert","Exemple SAP"],
-        ["<span class='k8s'>liveness</span>","Le conteneur est-il bloqué ? Si oui → redémarrage automatique","SAPMMC « process hung » sur le dispatcher"],
-        ["<span class='k8s'>readiness</span>","Peut-il accepter du trafic ? Si non → sorti du load-balancing, mais PAS redémarré","ICM pas encore initialisé : PAS démarré mais pas inscrit au gateway"],
-        ["<span class='k8s'>startup</span>","Période de grâce au démarrage avant d'appliquer la liveness","Le kernel SAP démarre lentement, c'est normal"]]},
-  {code:"yaml", t:"Un pod SAP + sidecar, avec sondes", src:
+    {h:"A Pod = an application instance", t:"A PAS instance, a HANA kernel, a log sidecar. A container is NOT an application: a pod sometimes bundles several."},
+    {h:"A Pod = mortal", t:"A pod can die at any moment (crash, node failure, update, autoscaling). Never get attached to its name: it contains a random suffix."}]},
+  {h:"The 3 health probes", sub:"So the control plane knows whether your application is usable:"},
+  {tbl:[["Probe","What it does","SAP example"],
+        ["<span class='k8s'>liveness</span>","Is the container stuck? If yes → automatic restart","SAPMMC “process hung” on the dispatcher"],
+        ["<span class='k8s'>readiness</span>","Can it take traffic? If not → pulled out of load-balancing, but NOT restarted","ICM not initialized yet: PAS started but not registered at the gateway"],
+        ["<span class='k8s'>startup</span>","Grace period at startup before liveness applies","The SAP kernel starts slowly, that is normal"]]},
+  {code:"yaml", t:"An SAP pod + sidecar, with probes", src:
 `apiVersion: v1
 kind: Pod
 metadata:
@@ -254,7 +254,7 @@ metadata:
     app: sap-pas
 spec:
   containers:
-  - name: disp-work           # le PAS
+  - name: disp-work           # the PAS
     image: sap/pas:7.90
     ports:
     - containerPort: 3200     # dispatcher
@@ -263,35 +263,35 @@ spec:
       httpGet: { path: /health, port: 8080 }
     readinessProbe:
       httpGet: { path: /ready, port: 8080 }
-  - name: sidecar-logs        # partage le même réseau que le PAS
+  - name: sidecar-logs        # shares the PAS network
     image: fluent-bit:latest`},
-  {code:"kubectl", t:"Dépanner un pod (le réflexe Basis)", src:
-`kubectl get pods -n tlx                  # STATUS : Running, CrashLoopBackOff, OOMKilled…
-kubectl describe pod pas-tlx-0 -n tlx    # événements, raisons, images tirées
-kubectl logs pas-tlx-0 -c disp-work -n tlx        # le « dev_disp.log »
-kubectl exec -it pas-tlx-0 -n tlx -- bash         # mode sapdba
-kubectl delete pod pas-tlx-0 -n tlx      # le Deployment en recrée un autre`},
-  {warn:"<b>CrashLoopBackOff</b> = votre conteneur crashe en boucle. Cause n°1 en migration SAP : consommation mémoire du kernel/JVM &gt; RAM allouée au pod (vérifiez <code>OOMKilled</code> dans <code>kubectl describe</code>)."}
+  {code:"kubectl", t:"Troubleshooting a pod (the Basis reflex)", src:
+`kubectl get pods -n tlx                  # STATUS: Running, CrashLoopBackOff, OOMKilled…
+kubectl describe pod pas-tlx-0 -n tlx    # events, reasons, images pulled
+kubectl logs pas-tlx-0 -c disp-work -n tlx        # the "dev_disp.log"
+kubectl exec -it pas-tlx-0 -n tlx -- bash         # your shell inside
+kubectl delete pod pas-tlx-0 -n tlx      # the Deployment creates another one`},
+  {warn:"<b>CrashLoopBackOff</b> = your container crashes in a loop. Cause #1 in SAP migrations: kernel/JVM memory footprint &gt; RAM allocated to the pod (check <code>OOMKilled</code> in <code>kubectl describe</code>)."}
 ]},
 
 /* ---------------- 6 ---------------- */
-{ title:"Labels : l'annuaire du cluster", icon:"🏷️", blocks:[
-  {p:"Un <b>label</b> est une paire clé=valeur collée sur chaque objet. Ce n'est PAS décoratif : c'est LE mécanisme par lequel Kubernetes relie les objets entre eux."},
+{ title:"Labels: the cluster's directory", icon:"🏷️", blocks:[
+  {p:"A <b>label</b> is a key=value pair stuck on every object. Not decorative at all: it is THE mechanism Kubernetes uses to tie objects together."},
   {cards:[
-    {h:"Sélection", t:"Un Service ne « contient » pas les pods : il regarde quels pods portent <code>app: sap-pas</code>."},
-    {h:"Multi-dimension", t:"Un pod peut porter <code>app: pas, sid: tlx, env: qa</code> — on le filtre par n'importe quelle combinaison."}]},
-  {code:"bash", t:"Requêter comme un DBA", src:
-`kubectl get pods -n tlx -l app=sap-pas        # tous les PAS
-kubectl get pods -n tlx -l 'env in (qa,dev)'  # plusieurs environnements
-kubectl get all -n tlx -l sid=tlx             # les objets de ce SID`},
-  {map:"<b>Équivalence SAP.</b> Labels ≈ votre logique de structuration dans <code>T000</code> (inventaire des systèmes et clients), étendue à tout : pods, services, volumes, secrets."}
+    {h:"Selection", t:"A Service does not “contain” pods: it watches which pods carry <code>app: sap-pas</code>."},
+    {h:"Multi-dimensional", t:"One pod can carry <code>app: pas, sid: tlx, env: qa</code> — filter by any combination."}]},
+  {code:"bash", t:"Query like a DBA", src:
+`kubectl get pods -n tlx -l app=sap-pas        # all the PAS
+kubectl get pods -n tlx -l 'env in (qa,dev)'  # several environments
+kubectl get all -n tlx -l sid=tlx             # this SID's objects`},
+  {map:"<b>SAP translation.</b> Labels ≈ your structuring logic in <code>T000</code> (the inventory of systems and clients), extended to everything: pods, services, volumes, secrets."}
 ]},
 
 /* ---------------- 7 ---------------- */
-{ title:"Deployment : la mise à jour maîtrisée", icon:"🚀", blocks:[
-  {lead:"Le <b>Deployment</b> gère des pods identiques en série, une mise à jour par roulement et un historique de révisions. C'est ce qui remplace votre fenêtre de maintenance classique."},
-  {h:"Le duo Deployment + ReplicaSet", t:"Le Deployment déclare combien de répliques ; un ReplicaSet maintient exactement N pods. Chaque nouvelle version crée un ReplicaSet : le retour arrière s'effectue instantanément."},
-  {code:"yaml", t:"Deployment avec mise à jour en roulement", src:
+{ title:"Deployment: controlled rollouts", icon:"🚀", blocks:[
+  {lead:"A <b>Deployment</b> manages a series of identical pods, rolling updates and a revision history. It replaces your classic maintenance window."},
+  {h:"The Deployment + ReplicaSet duo", sub:"The Deployment declares how many replicas; a ReplicaSet keeps exactly N pods alive. Each new version spins up a new ReplicaSet: rollback is instant."},
+  {code:"yaml", t:"Deployment with a rolling update", src:
 `apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -302,8 +302,8 @@ spec:
   strategy:
     type: RollingUpdate
     rollingUpdate:
-      maxSurge: 1          # démarrage possible d'1 pod de plus pendant l'upgrade
-      maxUnavailable: 0    # jamais moins de 3 pods disponibles
+      maxSurge: 1          # may start 1 extra pod during the upgrade
+      maxUnavailable: 0    # never fewer than 3 pods available
   selector:
     matchLabels: { app: sap-pas }
   template:
@@ -311,54 +311,54 @@ spec:
     spec:
       containers:
       - name: pas
-        image: registry.airbus.prod/sap/pas:7.90-sp3   # ← ici, la mise à jour`},
-  {code:"bash", t:"Les commandes de mise à jour", src:
+        image: registry.airbus.prod/sap/pas:7.90-sp3   # ← the update`},
+  {code:"bash", t:"The update commands", src:
 `kubectl set image deployment/pas-tlx pas=.../pas:7.90-sp4 -n tlx
-kubectl rollout status deployment/pas-tlx -n tlx    # suivre le roulement
-kubectl rollout restart deployment/pas-tlx -n tlx   # redémarrage propre = patch
-kubectl rollout undo deployment/pas-tlx -n tlx      # retour arrière immédiat`},
-  {tip:"« <code>rollout undo</code> » en une seconde ce que Pacemaker + snapshot + runbook faisaient en 45 minutes."},
-  {h:"Horizontal Pod Autoscaler (HPA)", t:"À la manière d'une ressource dynamique, mais au niveau applicatif : si le CPU moyen dépasse X %, ajouter automatiquement des instances du PAS."},
-  {map:"<b>Équivalence SAP.</b> Deployment ≈ la notion d'instances app server supplémentaires dans un système réplicables horizontal, piloté par le cluster au lieu du clic SAPMMC."}
+kubectl rollout status deployment/pas-tlx -n tlx    # watch the rollout
+kubectl rollout restart deployment/pas-tlx -n tlx   # clean restart = patch
+kubectl rollout undo deployment/pas-tlx -n tlx      # instant rollback`},
+  {tip:"“<code>rollout undo</code>” in one second what Pacemaker + snapshot + runbook used to do in 45 minutes."},
+  {h:"Horizontal Pod Autoscaler (HPA)", sub:"Like a dynamic resource, but at application level: if average CPU goes over X%, automatically add PAS instances."},
+  {map:"<b>SAP translation.</b> Deployment ≈ the notion of horizontally replicable application server instances, driven by the cluster instead of SAPMMC clicks."}
 ]},
 
 /* ---------------- 8 ---------------- */
-{ title:"Service : un accès stable aux pods", icon:"🔀", blocks:[
-  {lead:"Les pods naissent et meurent, avec des IP éphémères. Le <b>Service</b> donne une IP + un nom DNS stables, face à un groupe de pods sélectionnés par label."},
-  {h:"Le CoreDNS fait le magicien", t:"Chaque service aura un nom DNS : <code>pas-gw.tlx.svc.cluster.local</code>. Les autres pods le résolvent nativement — plus de maintenance de fichiers hosts."},
-  {tbl:[["Type d'un Service","Équivalent concret","Usage SAP"],
-        ["<span class='k8s'>ClusterIP</span>","IP interne au cluster","Conversation ASCS ↔ PAS, HANA ↔ PAS"],
-        ["<span class='k8s'>NodePort</span>","Port ouvert sur chaque node (30xxx)","Debug externe, outil qui ne comprend pas le DNS interne"],
-        ["<span class='k8s'>LoadBalancer</span>","Load-balancer cloud (OCI), IP publique","Front web ICM exposé aux clients"],
-        ["<span class='k8s'>ExternalName</span>","Alias DNS","Pointe vers un système SAP qui reste sur VM, pendant la migration"]]},
-  {code:"yaml", t:"Service pour la passerelle du PAS", src:
+{ title:"Service: a stable entry point", icon:"🔀", blocks:[
+  {lead:"Pods are born and die, with ephemeral IPs. A <b>Service</b> provides a stable IP + DNS name in front of a group of pods selected by label."},
+  {h:"CoreDNS does the magic", sub:"Every service gets a DNS name: <code>pas-gw.tlx.svc.cluster.local</code>. Other pods resolve it natively — no more hosts-file maintenance."},
+  {tbl:[["Service type","Concrete equivalent","SAP usage"],
+        ["<span class='k8s'>ClusterIP</span>","IP internal to the cluster","ASCS ↔ PAS, HANA ↔ PAS conversations"],
+        ["<span class='k8s'>NodePort</span>","Port opened on every node (30xxx)","External debugging, tools that don't speak internal DNS"],
+        ["<span class='k8s'>LoadBalancer</span>","Cloud load balancer (OCI), public IP","ICM web front exposed to clients"],
+        ["<span class='k8s'>ExternalName</span>","DNS alias","Points to an SAP system still on a VM, during the migration"]]},
+  {code:"yaml", t:"Service for the PAS gateway", src:
 `apiVersion: v1
 kind: Service
 metadata:
   name: pas-gw
   namespace: tlx
 spec:
-  type: ClusterIP                 # invisible de l'extérieur : parfait
+  type: ClusterIP                 # invisible from outside: perfect
   selector:
-    app: sap-pas                  # ← TOUS les pods qui portent ce label
+    app: sap-pas                  # ← ALL pods carrying this label
   ports:
   - name: gw
-    port: 3300                    # le port servi
-    targetPort: 3300              # le port du pod`},
-  {map:"<b>Équivalence SAP.</b> Service ClusterIP ≈ le naming via message server (<code>ms/…</code>): un point d'entrée fiable vers des instances potentiellement mouvantes. DNS + load-balancer privatif."}
+    port: 3300                    # the served port
+    targetPort: 3300              # the pod's port`},
+  {map:"<b>SAP translation.</b> A ClusterIP Service ≈ naming via the message server (<code>ms/…</code>): a reliable entry point towards potentially moving instances. DNS + an internal load balancer."}
 ]},
 
 /* ---------------- 9 ---------------- */
-{ title:"Ingress : le portail L7", icon:"🌐", blocks:[
-  {lead:"Un <b>Ingress</b> reçoit le trafic HTTP/HTTPS extérieur (via un LoadBalancer) et le route, par nom d'hôte et chemin, vers les bons Services. C'est votre reverse-proxy du datacenter, en version déclarative."},
-  {code:"yaml", t:"Ingress : une URL, un point d'entrée TLS unique", src:
+{ title:"Ingress: the L7 gateway", icon:"🌐", blocks:[
+  {lead:"An <b>Ingress</b> receives external HTTP/HTTPS traffic (through a LoadBalancer) and routes it, by hostname and path, to the right Services. It is your datacenter reverse-proxy, declarative edition."},
+  {code:"yaml", t:"Ingress: one URL, one TLS entry point", src:
 `apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: airbus-sap
   namespace: tlx
   annotations:
-    cert-manager.io/cluster-issuer: letsencrypt   # certificats automatiques
+    cert-manager.io/cluster-issuer: letsencrypt   # automatic certificates
 spec:
   tls:
   - hosts: [ sap-tlx.airbus.internal ]
@@ -373,48 +373,48 @@ spec:
           service:
             name: pas-gw
             port: { number: 3300 }`},
-  {tip:"C'est exactement le rôle de Caddy sur le serveur qui héberge ce jeu : terminer le HTTPS, router vers le bon conteneur. Kubernetes industrialise ce pattern à toute échelle."}
+  {tip:"This is exactly the role of Caddy on the server hosting this game: terminating HTTPS, routing to the right container. Kubernetes industrializes that pattern at any scale."}
 ]},
 
 /* ---------------- 10 ---------------- */
-{ title:"ConfigMap & Secret : la config externalisée", icon:"🔐", blocks:[
-  {lead:"La règle d'or de Kubernetes : <b>une image immuable</b>. Ce qui change d'un environnement à l'autre est injecté au démarrage, jamais codé en dur."},
+{ title:"ConfigMap & Secret: externalized configuration", icon:"🔐", blocks:[
+  {lead:"Kubernetes' golden rule: <b>an immutable image</b>. Whatever changes between environments is injected at startup, never hard-coded."},
   {cards:[
-    {h:"ConfigMap", t:"De la config lisible : paramètres de profil, fichiers de config, variables d'environnement. Montée comme variables ou volume."},
-    {h:"Secret", t:"Les données sensibles : mots de passe BDD, certificats, clés TLS. Encodés base64 (pas du chiffrement!), montés idem."}]},
-  {code:"bash", t:"Créer depuis la CLI", src:
+    {h:"ConfigMap", t:"Readable config: profile parameters, config files, environment variables. Mounted as variables or a volume."},
+    {h:"Secret", t:"Sensitive data: DB passwords, certificates, TLS keys. Base64-encoded (not encrypted!), mounted the same way."}]},
+  {code:"bash", t:"Create from the CLI", src:
 `kubectl create configmap pas-profile --from-file=DEFAULT.PFL -n tlx
 kubectl create secret generic hana-credentials \\
     --from-literal=username=SAPABAP1 \\
     --from-literal=password='Th3Re4lP455w0rd' -n tlx
 kubectl get secret hana-credentials -n tlx -o jsonpath='{.data.password}' | base64 -d`},
-  {warn:"Un <b>Secret n'est PAS chiffré</b> dans etcd sans config explicite (EncryptionConfiguration). Dans la vraie vie Airbus, les secrets de valeur sont détenus par un coffre externe (Vault) : le Secret Kubernetes ne transporte qu'un jeton."}
+  {warn:"A <b>Secret is NOT encrypted</b> in etcd without explicit configuration (EncryptionConfiguration). In real Airbus life, valuable secrets live in an external vault (Vault): the Kubernetes Secret only carries a token."}
 ]},
 
 /* ---------------- 11 ---------------- */
-{ title:"StatefulSet : le cas SAP par excellence", icon:"🏃", blocks:[
-  {lead:"Un <b>StatefulSet</b> = un Deployment, mais avec une <b>identité fixe et persistante</b> : pods nommés, démarrage ordonné, stockage dédié par réplique."},
-  {p:"Règlesimple en SAP : tout ce qui a une « personnalité » (HANA, ASCS/ERS, PAS unique) veut un StatefulSet. Tout ce qui est anonyme et répliquable (web dispatcher, PAS scalables) reste en Deployment."},
-  {tbl:[["Besoin SAP","Ce qu'apporte le StatefulSet"],
-        ["Chaque instance garde son nom stable","Pods appelés <code>hana-0</code>, <code>hana-1</code> — jamais renommés"],
-        ["Maîtriser l'ordre de démarrage","HSR : <code>hana-0</code> (primaire) démarre avant <code>hana-1</code> (secondaire)"],
-        ["Stockage persistant par instance","Chaque réplique a SA PVC, son volume dédié"],
-        ["Joindre une instance précise","Le Service « headless » permet de joindre <code>hana-0.hana.tlx.svc.cluster.local</code>"]]},
-  {code:"yaml", t:"StatefulSet pour un couple HANA HSR (simplifié)", src:
+{ title:"StatefulSet: the SAP case par excellence", icon:"🏃", blocks:[
+  {lead:"A <b>StatefulSet</b> = a Deployment, but with a <b>fixed and persistent identity</b>: named pods, ordered startup, dedicated storage per replica."},
+  {p:"Simple SAP rule: anything with a “personality” (HANA, ASCS/ERS, a single PAS) wants a StatefulSet. Anything anonymous and replicable (web dispatchers, scalable PAS) stays a Deployment."},
+  {tbl:[["SAP need","What the StatefulSet brings"],
+        ["Each instance keeps a stable name","Pods called <code>hana-0</code>, <code>hana-1</code> — never renamed"],
+        ["Control the startup order","HSR: <code>hana-0</code> (primary) starts before <code>hana-1</code> (secondary)"],
+        ["Persistent storage per instance","Each replica has ITS OWN PVC, its dedicated volume"],
+        ["Reach one specific instance","The “headless” Service lets you hit <code>hana-0.hana.tlx.svc.cluster.local</code>"]]},
+  {code:"yaml", t:"StatefulSet for an HSR HANA pair (simplified)", src:
 `apiVersion: apps/v1
 kind: StatefulSet
 metadata:
   name: hana
   namespace: tlx
 spec:
-  serviceName: hana-headless      # Service headless : DNS par pod
-  replicas: 2                     # primaire + secondaire (HSR)
+  serviceName: hana-headless      # headless Service: per-pod DNS
+  replicas: 2                     # primary + secondary (HSR)
   selector: { matchLabels: { app: hana } }
   template:
     metadata: { labels: { app: hana } }
     spec:
       affinity:
-        podAntiAffinity:          # jamais les 2 sur le même node !
+        podAntiAffinity:          # never both on the same node!
           requiredDuringSchedulingIgnoredDuringExecution:
           - labelSelector: { matchLabels: { app: hana } }
             topologyKey: kubernetes.io/hostname
@@ -423,46 +423,46 @@ spec:
         image: sap/hana:2-sps07
         volumeMounts:
         - { name: data, mountPath: /hana/data }
-  volumeClaimTemplates:           # 1 PVC par réplique, généré automatiquement
+  volumeClaimTemplates:           # 1 PVC per replica, auto-generated
   - metadata: { name: data }
     spec:
       accessModes: [ ReadWriteOnce ]
       resources: { requests: { storage: 1Ti } }`},
-  {map:"<b>Équivalence SAP.</b> StatefulSet ≈ la personnalité d'une instance nommée. Les contraintes Pacemaker (colocation, ordre) deviennent <code>podAntiAffinity</code> + <code>podManagementPolicy</code>."}
+  {map:"<b>SAP translation.</b> StatefulSet ≈ the personality of a named instance. Pacemaker constraints (colocation, order) become <code>podAntiAffinity</code> + <code>podManagementPolicy</code>."}
 ]},
 
 /* ---------------- 12 ---------------- */
-{ title:"Volumes : le stockage qui survit", icon:"💾", blocks:[
-  {lead:"Le stockage interne d'un pod est éphémère — tout fichier externe non persistant disparaît au redémarrage. Tout ce qui constitue une base SAP doit vivre sur un <b>volume persistant</b>."},
-  {h:"Les trois acteurs", t:""},
+{ title:"Volumes: storage that survives", icon:"💾", blocks:[
+  {lead:"A pod's internal storage is ephemeral — anything written outside a persistent volume disappears on restart. Everything that makes up an SAP database must live on a <b>persistent volume</b>."},
+  {h:"The three actors", sub:""},
   {cards:[
-    {h:"PVC (PersistentVolumeClaim)", t:"La demande de l'application : « je veux 1 To en RWO pour HANA »."},
-    {h:"PV (PersistentVolume)", t:"La ressource réelle fournie par le cluster, gérée par les drivers CSI."},
-    {h:"StorageClass", t:"La politique de provisionnement : quel stockage (Disque OCI, NFS, local SSD), quelle performance, quelle règle de réclamation."}]},
-  {code:"yaml", t:"PVC pour HANA", src:
+    {h:"PVC (PersistentVolumeClaim)", t:"The application's request: “I want 1 TB in RWO for HANA”."},
+    {h:"PV (PersistentVolume)", t:"The actual resource provided by the cluster, managed by CSI drivers."},
+    {h:"StorageClass", t:"The provisioning policy: which storage (OCI disk, NFS, local SSD), which performance, which reclaim rule."}]},
+  {code:"yaml", t:"PVC for HANA", src:
 `apiVersion: v1
 kind: PersistentVolumeClaim
 metadata: { name: hana-data, namespace: tlx }
 spec:
-  storageClassName: oci-bv-ultra    # Iops max, exigé par HANA
-  accessModes: [ ReadWriteOnce ]    # un seul node à la fois
+  storageClassName: oci-bv-ultra    # max IOPS, required by HANA
+  accessModes: [ ReadWriteOnce ]    # one node at a time
   resources:
     requests: { storage: 1Ti }`},
-  {tbl:[["Mode d'accès","Concrètement","Usage SAP"],
-        ["<span class='k8s'>RWO</span> (ReadWriteOnce)","Monter par 1 seul node en lire-écrire","Bases de données (HANA), filesystem ASCS"],
-        ["<span class='k8s'>ROX</span> (ReadOnlyMany)","Partagé en lecture par des milliers de pods","Fichiers de référence, packages d'installation"],
-        ["<span class='k8s'>RWX</span> (ReadWriteMany)","Partagé en lecture-écriture (NFS type)","Répertoire de transport <code>/usr/sap/trans</code>, logs partagés"]]},
-  {tip:"Le volume <code>/usr/sap/trans</code> partagé entre 5 systèmes SAP est LE cas RWX classique : en Kubernetes, un seul PVC RWX monté par tous les pods concernés."}
+  {tbl:[["Access mode","Concretely","SAP usage"],
+        ["<span class='k8s'>RWO</span> (ReadWriteOnce)","Mounted read-write by 1 single node","Databases (HANA), ASCS filesystem"],
+        ["<span class='k8s'>ROX</span> (ReadOnlyMany)","Shared read-only by thousands of pods","Reference files, installation packages"],
+        ["<span class='k8s'>RWX</span> (ReadWriteMany)","Shared read-write (NFS-style)","Transport directory <code>/usr/sap/trans</code>, shared logs"]]},
+  {tip:"The <code>/usr/sap/trans</code> volume shared between 5 SAP systems is THE classic RWX case: in Kubernetes, a single RWX PVC mounted by every pod involved."}
 ]},
 
 /* ---------------- 13 ---------------- */
-{ title:"RBAC : la sécurité d'accès", icon:"🛂", blocks:[
-  {lead:"À Kubernetes, tout le monde est un utilisateur ou un processus. Chaque action passe par l'API server et est contrôlée par le <b>RBAC</b> (Role-Based Access Control)."},
+{ title:"RBAC: access control", icon:"🛂", blocks:[
+  {lead:"In Kubernetes, everyone is a user or a process. Every action goes through the API server and is checked by <b>RBAC</b> (Role-Based Access Control)."},
   {cards:[
-    {h:"Role + RoleBinding", t:"Dans un namespace : « l'équipe QA peut lire et créer des pods dans tlx »."},
-    {h:"ClusterRole + ClusterRoleBinding", t:"Au niveau cluster : « les admins peuvent toucher à tout, y compris les nodes »."},
-    {h:"ServiceAccount", t:"L'identité d'un <b>pod</b>, pas d'une personne. Ex : l'agent de sauvegarde Velero, cert-manager."}]},
-  {code:"yaml", t:"Laisser l'utilisateur Arnaud lire uniquement <code>tlx</code>", src:
+    {h:"Role + RoleBinding", t:"Within a namespace: “the QA team may read and create pods in tlx”."},
+    {h:"ClusterRole + ClusterRoleBinding", t:"Cluster-wide: “admins may touch everything, including nodes”."},
+    {h:"ServiceAccount", t:"The identity of a <b>pod</b>, not a person. E.g. the Velero backup agent, cert-manager."}]},
+  {code:"yaml", t:"Let user Arnaud read only <code>tlx</code>", src:
 `apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
 metadata: { name: qa-readonly, namespace: tlx }
@@ -481,93 +481,93 @@ roleRef:
   kind: Role
   name: qa-readonly
   apiGroup: rbac.authorization.k8s.io`},
-  {map:"<b>Équivalence SAP.</b> RBAC ≈ PFCG (rôles et autorisations SAP), mais versionné en YAML et appliqué. Le ServiceAccount ≈ un utilisateur système technique dédié aux processus internes."}
+  {map:"<b>SAP translation.</b> RBAC ≈ PFCG (SAP roles and authorizations), but versioned in YAML. A ServiceAccount ≈ a technical system user for internal processes."}
 ]},
 
 /* ---------------- 14 ---------------- */
-{ title:"Ressources et scheduling", icon:"⚖️", blocks:[
-  {lead:"Combien de RAM ce PAS consommera-t-il ? Sur quel node peut-il tourner ? C'est le volet <b>planification</b> — ce que Pacemaker faisait avec des contraintes."},
+{ title:"Resources and scheduling", icon:"⚖️", blocks:[
+  {lead:"How much RAM will this PAS use? Which node may it run on? This is the <b>planning</b> side — what Pacemaker did with constraints."},
   {cards:[
-    {h:"requests (le promis)", t:"La mémoire et CPU garantis par le scheduler. C'est avec ces chiffres qu'il choisit le node."},
-    {h:"limits (le plafond)", t:"Le maximum autorisé. Dépasser les limites CPU ralentit votre process. Dépasser la mémoire : le conteneur est tué (OOMKilled)."}]},
-  {tbl:[["Classe QoS","Obtenue quand","Priorité en cas de stress du node"],
-        ["<span class='k8s'>Guaranteed</span>","limits == requests sur tous les conteneurs","Le plus protégé — pods HANA, ASCS"],
-        ["<span class='k8s'>Burstable</span>","requests &lt; limits","PAS, outils internes"],
-        ["<span class='k8s'>BestEffort</span>","aucune demande","À éviter absolument pour SAP"]]},
-  {h:"Choisir un node : affinité, taints, tolérations", t:""},
-  {ul:["<b>nodeSelector</b> : gros filtre (« ce pod veut un node avec SSD NVMe »).",
-       "<b>podAntiAffinity</b> : jamais les deux HANA sur le même node (HSR).",
-       "<b>Taints / Tolérations</b> : un node marqué <code>dedicated-sap:NoSchedule</code> refuse tout pod sans la tolérance correspondante. C'est un cluster dédié SAP, proprement."]},
-  {code:"yaml", t:"Un pod HANA réservé à un node dédié", src:
+    {h:"requests (the promise)", t:"The memory and CPU guaranteed by the scheduler. These are the numbers it uses to pick a node."},
+    {h:"limits (the ceiling)", t:"The maximum allowed. Going over the CPU limit throttles your process. Going over the memory limit: the container is killed (OOMKilled)."}]},
+  {tbl:[["QoS class","Obtained when","Priority when a node is under pressure"],
+        ["<span class='k8s'>Guaranteed</span>","limits == requests on every container","Best protected — HANA, ASCS pods"],
+        ["<span class='k8s'>Burstable</span>","requests &lt; limits","PAS, internal tools"],
+        ["<span class='k8s'>BestEffort</span>","no requests at all","Absolutely avoid for SAP"]]},
+  {h:"Picking a node: affinity, taints, tolerations", sub:""},
+  {ul:["<b>nodeSelector</b>: a coarse filter (“this pod wants a node with NVMe SSD”).",
+       "<b>podAntiAffinity</b>: never both HANA instances on the same node (HSR).",
+       "<b>Taints / Tolerations</b>: a node marked <code>dedicated-sap:NoSchedule</code> rejects every pod without the matching toleration. A properly dedicated SAP cluster."]},
+  {code:"yaml", t:"A HANA pod pinned to a dedicated node", src:
 `spec:
   nodeSelector:
-    workload: sap-hana     # le node porte ce label
+    workload: sap-hana     # the node carries this label
   tolerations:
-  - key: dedicated-sap     # il tolère le taint « dedicated-sap »
+  - key: dedicated-sap     # it tolerates the "dedicated-sap" taint
     operator: Exists
     effect: NoSchedule
   resources:
     requests: { memory: "256Gi", cpu: "32" }
     limits:   { memory: "256Gi", cpu: "32" }   # => QoS Guaranteed`},
-  {map:"<b>Équivalence SAP.</b> Taint/Toleration ≈ affectation statique dans un cluster Pacemaker. requests/limits ≈ le paramétrage mémoire du kernel et du JVM, désormais déclarés instance par instance dans le YAML."}
+  {map:"<b>SAP translation.</b> Taint/Toleration ≈ static placement in a Pacemaker cluster. requests/limits ≈ kernel and JVM memory settings, now declared per instance in YAML."}
 ]},
 
 /* ---------------- 15 ---------------- */
-{ title:"Diagnostic : le panorama rapide", icon:"🔧", blocks:[
-  {lead:"La procédure de dépannage standard, dans le bon ordre — comme un diagnostic Basis, mais au plus près de l'infrastructure."},
-  {code:"kubectl", t:"Le cercle d'or", src:
-`# 1. L'ensemble, trié, en ciblant les pods suspects
+{ title:"Troubleshooting: the field guide", icon:"🔧", blocks:[
+  {lead:"The standard debugging procedure, in the right order — like a Basis diagnosis, but closer to the infrastructure."},
+  {code:"kubectl", t:"The golden circle", src:
+`# 1. The big picture, filtering out suspect pods
 kubectl get pods -n tlx | grep -v Running
 
-# 2. Les détails d'un pod problématique
+# 2. Details of a problematic pod
 kubectl describe pod bad-pod -n tlx
-#    → tout en bas, la section "Events" fait foi
+#    → at the very bottom, the "Events" section tells the truth
 
-# 3. Les logs
-kubectl logs bad-pod -n tlx --previous       # logs avant le crash !
+# 3. The logs
+kubectl logs bad-pod -n tlx --previous       # logs from before the crash!
 
-# 4. Les objets parents
+# 4. The parent objects
 kubectl get deployment/statefulset -n tlx
 
-# 5. Le niveau node
+# 5. The node level
 kubectl describe node node-3
 kubectl top nodes ; kubectl top pods -n tlx
 
-# 6. Les événements du namespace (le journal du cluster)
+# 6. Namespace events (the cluster's journal)
 kubectl get events -n tlx --sort-by=.lastTimestamp`},
-  {tbl:[["Status du pod","Signification générale","Le réflexe Basis"],
-        ["<span class='k8s'>ImagePullBackOff</span>","Image inexistante / registry inaccessible / secret d'auth manquant","Vérifier le tag de l'image et les credentials du registry"],
-         ["<span class='k8s'>CrashLoopBackOff</span>","Le process tourne puis meurt en boucle","Logs + --previous. Erreur de config SAP typique"],
-         ["<span class='k8s'>OOMKilled (137)</span>","Dépassement de la limite mémoire","Baisser la charge ou monter <code>limits.memory</code>"],
-         ["<span class='k8s'>Pending</span>","Le scheduler ne trouve pas de node (ressource, affinité, taint)","<code>describe pod</code> → Events : la raison y est écrite"],
-         ["<span class='k8s'>ContainerCreating</span> (figé)","Volume / montage qui ne se provisionne jamais","Regarder la PVC, le driver CSI, le node"]]},
-  {tip:"L'outil <b>K9s</b> (UI terminal) regroupe tous ces vues en deux frappes et devient le nouveau SAPMMC. Indispensable."}
+  {tbl:[["Pod status","General meaning","The Basis reflex"],
+        ["<span class='k8s'>ImagePullBackOff</span>","Non-existent image / unreachable registry / missing auth secret","Check the image tag and registry credentials"],
+         ["<span class='k8s'>CrashLoopBackOff</span>","The process runs then dies in a loop","Logs + --previous. Typical SAP config error"],
+         ["<span class='k8s'>OOMKilled (137)</span>","Memory limit exceeded","Lower the load or raise <code>limits.memory</code>"],
+         ["<span class='k8s'>Pending</span>","The scheduler finds no node (resources, affinity, taint)","<code>describe pod</code> → Events: the reason is written there"],
+         ["<span class='k8s'>ContainerCreating</span> (stuck)","Volume / mount that never provisions","Check the PVC, the CSI driver, the node"]]},
+  {tip:"The tool <b>K9s</b> (terminal UI) wraps all these views in two keystrokes and becomes the new SAPMMC. Essential."}
 ]},
 
 /* ---------------- 16 ---------------- */
-{ title:"Le dictionnaire SAP → Kubernetes", icon:"🗺️", blocks:[
-  {lead:"La table de traduction complète : votre univers correspond toujours à un objet précis."},
-  {tbl:[["Monde SAP","monde Kubernetes","Remarque"],
-        ["<span class='sap'>SID (TLX, TXP)</span>","<span class='k8s'>Namespace</span>","Périmètre de nommage, droits, quotas"],
-         ["<span class='sap'>ASCS/SCS</span>","<span class='k8s'>StatefulSet + Service</span>","L'identité de l'instance est préservée"],
-         ["<span class='sap'>PAS</span>","<span class='k8s'>Deployment (RollingUpdate)</span>","Répliques scalables sans état"],
-         ["<span class='sap'>HANA</span>","<span class='k8s'>StatefulSet + PVC + antAffinity</span>","+ opérateur HANA pour la gestion HSR"],
-         ["<span class='sap'>Profils d'instance SAP</span>","<span class='k8s'>ConfigMap</span>","Paramètres extérieurs à l'image"],
-         ["<span class='sap'>SECSTORE / clés BDD</span>","<span class='k8s'>Secret (via Vault)</span>","Mots de passe, certificats"],
-         ["<span class='sap'>/usr/sap/trans</span>","<span class='k8s'>PVC RWX</span>","Le répertoire de transport partagé"],
-         ["<span class='sap'>Contraintes Pacemaker</span>","<span class='k8s'>Affinity / Taints / Tolérations</span>","Placement des pods"],
-         ["<span class='sap'>Message server (ms/…)</span>","<span class='k8s'>Service</span>","Point d'entrée stable"],
-         ["<span class='sap'>URL ICM / HTTP</span>","<span class='k8s'>Ingress</span>","HTTPS + routing L7"],
-         ["<span class='sap'>PFCG (autorisations)</span>","<span class='k8s'>RBAC (Role/Binding)</span>","Versionné dans Git"],
-         ["<span class='sap'>ST06 / SAPMMC monitor</span>","<span class='k8s'>kubectl top / K9s / Grafana</span>","La supervision est native"],
-         ["<span class='sap'>Transports (CTS+)</span>","<span class='k8s'>Git + GitOps (ArgoCD)</span>","La nouvelle chaîne dev → QA → prod"],
-         ["<span class='sap'>sapstart / sapcontrol</span>","<span class='k8s'>kubelet + probes</span>","Le cluster sait démarrer / surveiller / recréer"]]},
-  {dim:"Cette correspondance est également disponible en jeu (bouton 📘 Logbook), où chacun de ces concepts se retrouve en mission."}
+{ title:"The SAP → Kubernetes dictionary", icon:"🗺️", blocks:[
+  {lead:"The full translation table: your world always maps to a precise object."},
+  {tbl:[["SAP world","Kubernetes world","Note"],
+        ["<span class='sap'>SID (TLX, TXP)</span>","<span class='k8s'>Namespace</span>","Naming, rights, quota perimeter"],
+         ["<span class='sap'>ASCS/SCS</span>","<span class='k8s'>StatefulSet + Service</span>","The instance's identity is preserved"],
+         ["<span class='sap'>PAS</span>","<span class='k8s'>Deployment (RollingUpdate)</span>","Stateless scalable replicas"],
+         ["<span class='sap'>HANA</span>","<span class='k8s'>StatefulSet + PVC + antiAffinity</span>","+ a HANA operator handling HSR"],
+         ["<span class='sap'>SAP instance profiles</span>","<span class='k8s'>ConfigMap</span>","Parameters kept outside the image"],
+         ["<span class='sap'>SECSTORE / DB keys</span>","<span class='k8s'>Secret (via Vault)</span>","Passwords, certificates"],
+         ["<span class='sap'>/usr/sap/trans</span>","<span class='k8s'>RWX PVC</span>","The shared transport directory"],
+         ["<span class='sap'>Pacemaker constraints</span>","<span class='k8s'>Affinity / Taints / Tolerations</span>","Pod placement"],
+         ["<span class='sap'>Message server (ms/…)</span>","<span class='k8s'>Service</span>","Stable entry point"],
+         ["<span class='sap'>ICM / HTTP URL</span>","<span class='k8s'>Ingress</span>","HTTPS + L7 routing"],
+         ["<span class='sap'>PFCG (authorizations)</span>","<span class='k8s'>RBAC (Role/Binding)</span>","Versioned in Git"],
+         ["<span class='sap'>ST06 / SAPMMC monitoring</span>","<span class='k8s'>kubectl top / K9s / Grafana</span>","Monitoring is native"],
+         ["<span class='sap'>Transports (CTS+)</span>","<span class='k8s'>Git + GitOps (ArgoCD)</span>","The new dev → QA → prod chain"],
+         ["<span class='sap'>sapstart / sapcontrol</span>","<span class='k8s'>kubelet + probes</span>","The cluster knows how to start / watch / recreate"]]},
+  {dim:"This mapping is also available in the game (📘 Logbook button), where each of these concepts appears in a mission."}
 ]},
 
 /* ---------------- 17 ---------------- */
-{ title:"Quiz de synthèse", icon:"🎓", quiz:true, blocks:[
-  {lead:"10 questions, 20 points chacune : validez vos acquis avant de reprendre le jeu."}
+{ title:"Wrap-up quiz", icon:"🎓", quiz:true, blocks:[
+  {lead:"10 questions, 20 points each: validate what you learned before jumping back into the game."}
 ]}
 ];
 
@@ -575,40 +575,40 @@ kubectl get events -n tlx --sort-by=.lastTimestamp`},
    Quiz
    ================================================================ */
 const QUIZ = [
-  {q:"« Un PAS (pod) crashe » est détecté automatiquement par…",
-   o:["L'ingénieur de garde via Grafana","La health probe liveness (si configurée)","SAPMMC","Le scheduler"],a:1,
-   why:"La liveness probe fait redémarrer le conteneur par le kubelet — l'équivalent automatique de « sapcontrol -status » en boucle."},
-  {q:"Quel objet garantit l'identité stable d'une instance HANA ?",
+  {q:"“A PAS pod just crashed” is detected automatically by…",
+   o:["The on-call engineer via Grafana","The liveness health probe (if configured)","SAPMMC","The scheduler"],a:1,
+   why:"The liveness probe makes the kubelet restart the container — the automatic equivalent of looping “sapcontrol -status”."},
+  {q:"Which object guarantees a stable identity for a HANA instance?",
    o:["Deployment","StatefulSet","DaemonSet","Job"],a:1,
-   why:"StatefulSet = noms de pods stables (hana-0, hana-1), stockage persistant, ordonnancement prévisible."},
-  {q:"Les autres pods du système doivent joindre le PAS, sans aucune exposition extérieure. Quel objet ?",
-   o:["Ingress","Service type NodePort","Service type ClusterIP","ConfigMap"],a:2,
-   why:"ClusterIP : IP stable interne au cluster + nom DNS. Ingress est dédié au trafic HTTP externe."},
-  {q:"Votre PAS consomme 14,8 Go de RAM, sa limite est 14 Go. Que se passe-t-il ?",
-   o:["Rien","Le conteneur est tué (OOMKilled, exit 137)","Le système swappe automatiquement","L'orchestrateur réduit sa charge"],a:1,
-   why:"Dépasser la limite mémoire = OOMKill immédiat par le kernel. La vraie mémoire du process SAP doit être contrôlée dans le YAML."},
-  {q:"Pendant une mise à jour d'image d'un Deployment (3 répliques, maxUnavailable=0)…",
-   o:["Kubernetes arrête tout puis met à jour","Il remplace les pod un par un, en attendant que le nouveau soit prêt (readiness)","Il attend le prochain redémarrage","Il demande l'accord de l'admin"],a:1,
-   why:"RollingUpdate : remplacement progressif, en maintenant la capacité de service."},
-  {q:"Où stockez-vous le mot de passe de connexion ABAP vers la base HANA ?",
-   o:["ConfigMap","Secret (idéalement injecté par un coffre externe type Vault)","En clair dans le YAML du Deployment","Dans le kernel"],a:1,
-   why:"Le Secret, injecté par un secret-manager externe : etcd ne fait que l'encoder, pas le chiffrer par défaut."},
-  {q:"Un pod reste « Pending ». La cause la plus probable est…",
-   o:["Erreur dans la config de l'image","Crash de l'application","Le scheduler ne trouve pas de node satisfaisant la demande (RAM/CPU, affinité, taint)","Erreur de réseau"],a:2,
-   why:"Pending = le scheduler n'a pas trouvé de node acceptable. <code>describe pod</code> le dit explicitement dans les Events."},
-  {q:"Le répertoire <code>/usr/sap/trans</code> doit être partagé en écriture par des pods de plusieurs nodes. Quel accessMode ?",
+   why:"StatefulSet = stable pod names (hana-0, hana-1), persistent storage, predictable ordering."},
+  {q:"Other pods in the system must reach the PAS, with zero external exposure. Which object?",
+   o:["Ingress","A NodePort Service","A ClusterIP Service","ConfigMap"],a:2,
+   why:"ClusterIP: a stable IP inside the cluster + a DNS name. Ingress is for external HTTP traffic."},
+  {q:"Your PAS uses 14.8 GB of RAM, its limit is 14 GB. What happens?",
+   o:["Nothing","The container is killed (OOMKilled, exit 137)","The system swaps automatically","The orchestrator reduces its load"],a:1,
+   why:"Exceeding the memory limit = immediate OOMKill by the kernel. The real memory footprint of the SAP process must be controlled in YAML."},
+  {q:"During an image update of a Deployment (3 replicas, maxUnavailable=0)…",
+   o:["Kubernetes stops everything then updates","It replaces pods one by one, waiting for each new one to be ready (readiness)","It waits for the next restart","It asks the admin for approval"],a:1,
+   why:"RollingUpdate: progressive replacement, keeping service capacity intact."},
+  {q:"Where do you store the ABAP connection password to the HANA database?",
+   o:["ConfigMap","A Secret (ideally injected from an external vault like Vault)","In clear text in the Deployment YAML","Inside the kernel"],a:1,
+   why:"The Secret, injected by an external secret manager: etcd merely encodes it, it does not encrypt it by default."},
+  {q:"A pod stays “Pending”. The most likely cause is…",
+   o:["An error in the image config","An application crash","The scheduler finds no node satisfying the request (RAM/CPU, affinity, taint)","A network error"],a:2,
+   why:"Pending = the scheduler found no acceptable node. <code>describe pod</code> says so explicitly in the Events."},
+  {q:"The <code>/usr/sap/trans</code> directory must be shared read-write by pods on several nodes. Which accessMode?",
    o:["ReadWriteOnce (RWO)","ReadOnlyMany (ROX)","ReadWriteMany (RWX)","emptyDir"],a:2,
-   why:"RWX (type NFS) : monté en lecture-écriture par plusieurs nodes simultanément."},
-  {q:"Un Service trouve les pods vers lesquels router grâce à…",
-   o:["Leur IP directe","Un selector sur leurs labels","Le nom de chaque pod","Une annotation svc"],a:1,
-   why:"Un Service est un sélecteur, pas une liste : tout pod portant le label est automatiquement intégré (et le reste après un rescaling)."},
-  {q:"Le grand paradigme à comprendre : vous déclarez…",
-   o:["Des commandes à exécuter","L'état désiré, et le système s'y applique en permanence","Des procédures pas-à-pas","Des scripts de démarrage"],a:1,
-   why:"C'est le cœur de la philosophie : declarative state. Le control plane réconcilie en continu. On ne « fait » plus — on « décrit »."}
+   why:"RWX (NFS-style): mounted read-write by several nodes at the same time."},
+  {q:"A Service finds the pods it routes to thanks to…",
+   o:["Their direct IPs","A selector on their labels","Each pod's name","An svc annotation"],a:1,
+   why:"A Service is a selector, not a list: any pod carrying the label is automatically included (and stays after rescaling)."},
+  {q:"The big paradigm to grasp: you declare…",
+   o:["Commands to execute","The desired state, and the system enforces it continuously","Step-by-step procedures","Startup scripts"],a:1,
+   why:"That is the core philosophy: declarative state. The control plane reconciles continuously. You no longer “do” — you “describe”."}
 ];
 
 /* ================================================================
-   Rendu
+   Rendering
    ================================================================ */
 const $ = s => document.querySelector(s);
 const esc = s => String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
@@ -619,10 +619,10 @@ function findHTML(b){
   if(b.dim !== undefined)  return `<p class="dim">${b.dim}</p>`;
   if(b.h !== undefined)    return `<h2><span class="anchor">§</span>${b.h}</h2>${b.sub?`<p class="dim">${b.sub}</p>`:""}`;
   if(b.ul)                 return `<ul class="dots">${b.ul.map(x=>`<li>${x}</li>`).join("")}</ul>`;
-  if(b.tip)                return `<div class="callout co-tip"><b>💡 Bon à savoir</b>${b.tip}</div>`;
-  if(b.warn)               return `<div class="callout co-warn"><b>⚠️ Attention</b>${b.warn}</div>`;
-  if(b.map)                return `<div class="callout co-map"><b>🔁 Traduction SAP</b>${b.map}</div>`;
-  if(b.code)   return `<div class="codebar"><span>${esc(b.t||"terminal")}</span><button class="copy">📋 copier</button></div><pre>${esc(b.src)}</pre>`;
+  if(b.tip)                return `<div class="callout co-tip"><b>💡 Good to know</b>${b.tip}</div>`;
+  if(b.warn)               return `<div class="callout co-warn"><b>⚠️ Watch out</b>${b.warn}</div>`;
+  if(b.map)                return `<div class="callout co-map"><b>🔁 SAP translation</b>${b.map}</div>`;
+  if(b.code)   return `<div class="codebar"><span>${esc(b.t||"terminal")}</span><button class="copy">📋 copy</button></div><pre>${esc(b.src)}</pre>`;
   if(b.tbl){
     const [head, ...rows] = b.tbl;
     return `<table class="tbl"><thead><tr>${head.map(c=>`<th>${c||""}</th>`).join("")}</tr></thead><tbody>${rows.map(r=>`<tr>${r.map(c=>`<td>${c??""}</td>`).join("")}</tr>`).join("")}</tbody></table>`;
@@ -642,13 +642,13 @@ function chapterHTML(i){
         ${q.o.map((o,oi)=>`<button class="opt" data-o="${oi}">${o}</button>`).join("")}
         <div class="why">💡 ${q.why}</div>
       </div>`).join("");
-    body += `<div class="callout co-tip" id="quiz-score" style="display:none"><b>🏆 Résultat</b><span></span></div>`;
+    body += `<div class="callout co-tip" id="quiz-score" style="display:none"><b>🏆 Result</b><span></span></div>`;
   }
   const nav = `<div class="ch-nav">
     <button id="prev" ${i===0?"disabled":""}>← ${i>0?esc(CHAPTERS[i-1].title):""}</button>
     <button id="next" ${i===CHAPTERS.length-1?"disabled":""}>${i<CHAPTERS.length-1?esc(CHAPTERS[i+1].title):""} →</button>
   </div>`;
-  return `<div class="chapter"><p class="kicker">Chapitre ${String(i+1).padStart(2,"0")} / ${CHAPTERS.length}</p><h1>${ch.icon} ${ch.title}</h1>${body}${nav}</div>`;
+  return `<div class="chapter"><p class="kicker">Chapter ${String(i+1).padStart(2,"0")} / ${CHAPTERS.length}</p><h1>${ch.icon} ${ch.title}</h1>${body}${nav}</div>`;
 }
 
 /* ----- quiz ----- */
@@ -672,9 +672,9 @@ function bindQuiz(){
           s.style.display = "block";
           s.querySelector("span").innerHTML =
             `${ok} / ${QUIZ.length} (${pct}%) — ` +
-            (pct>=80 ? "opérationnel ! Reprenez le jeu, le terminal n'aura presque plus de secrets. 🚀"
-             : pct>=50 ? "Bonne base — relisez les chapitres où vous hésitez via le sommaire de gauche."
-             : "Commencez par les chapitres 1 à 5, puis revenez à ce quiz.");
+            (pct>=80 ? "operational! Jump back into the game, the terminal holds almost no secrets anymore. 🚀"
+             : pct>=50 ? "Solid base — reread the chapters you hesitated on via the left-hand menu."
+             : "Start with chapters 1 to 5, then come back to this quiz.");
         }
       });
     });
@@ -695,7 +695,7 @@ function show(i){
   });
 }
 
-/* ----- sommaire ----- */
+/* ----- table of contents ----- */
 $("#toc").innerHTML = CHAPTERS.map((c,i)=>
   `<div class="toc-item" data-i="${i}"><span class="n">${i+1}</span><span>${c.title}</span>${c.quiz?'<span class="qt">quiz</span>':""}</div>`).join("");
 $("#toc").addEventListener("click", e=>{
@@ -707,7 +707,7 @@ document.addEventListener("keydown", e=>{
   if(e.key==="ArrowLeft")  show(cur-1);
 });
 
-/* ----- recherche ----- */
+/* ----- search ----- */
 function norm(s){ return s.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,""); }
 $("#search").addEventListener("input", e=>{
   const q = norm(e.target.value.trim());
@@ -719,16 +719,16 @@ $("#search").addEventListener("input", e=>{
   });
 });
 
-/* ----- boutons copier ----- */
+/* ----- copy buttons ----- */
 document.addEventListener("click", e=>{
   if(!e.target.classList || !e.target.classList.contains("copy")) return;
   const pre = e.target.closest(".codebar").nextElementSibling;
   navigator.clipboard.writeText(pre.textContent).then(()=>{
-    e.target.textContent = "✅ copié"; setTimeout(()=>e.target.textContent="📋 copier", 1200);
+    e.target.textContent = "✅ copied"; setTimeout(()=>e.target.textContent="📋 copy", 1200);
   });
 });
 
-/* init (accès direct à un chapitre : ?ch=7) */
+/* init (direct chapter access: ?ch=7) */
 const want = new URLSearchParams(location.search).get("ch");
 show(want ? Math.min(CHAPTERS.length-1, Math.max(0, +want-1)) : 0);
 </script>
