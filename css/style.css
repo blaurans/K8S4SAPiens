@@ -245,3 +245,10 @@ input.pseud-in:focus{outline:none;border-color:var(--blue)}
   .panel{padding:18px}
   .mcard{flex-wrap:wrap}
 }
+
+/* course link (accueil + player gate) */
+.course-link{display:block;text-align:center;margin-top:22px;font-size:13.5px;color:var(--muted);text-decoration:none}
+.course-link b{color:#7db4ff}
+.course-link:hover{color:var(--txt)}
+.course-link:hover b{color:var(--blue)}
+

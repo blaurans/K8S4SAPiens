@@ -72,6 +72,7 @@ function maxScore() {
 /* ---------------- generic IO ---------------- */
 function initUI() {
   $('#tb-book').addEventListener('click', openBook);
+  $('#tb-course').addEventListener('click', () => window.open('cours.html', '_blank'));
   window.addEventListener('hashchange', route);
   setInterval(() => {
     if (STATE && STATE.started && !STATE.finished) { STATE.elapsed++; save(); }
@@ -245,6 +246,12 @@ function route() {
 }
 
 /* ---------------- home ---------------- */
+function courseLink() {
+  const a = el('a', 'course-link',
+    '🎓 New to Kubernetes? Open the <b>course</b> — 17 chapters, SAP ↔ K8s dictionary, final quiz');
+  a.href = 'cours.html'; a.target = '_blank'; a.rel = 'noopener';
+  return a;
+}
 function renderHome(app) {
   /* Player gate: no nickname selected yet */
   if (!STATE || !currentPlayerName()) {
@@ -298,6 +305,7 @@ function renderHome(app) {
     inp.addEventListener('keydown', e => { if (e.key === 'Enter') doAdd(); });
     form.appendChild(inp); form.appendChild(add);
     gate.appendChild(form);
+    gate.appendChild(courseLink());
     app.appendChild(gate);
     setTimeout(() => inp.focus(), 50);
     return;
@@ -320,6 +328,7 @@ function renderHome(app) {
     pills.appendChild(el('span', 'pill', x));
   });
   hero.appendChild(pills);
+  hero.appendChild(courseLink());
 
   /* resume */
   if (STATE.started && trackOf() && Object.keys(STATE.done).length) {
