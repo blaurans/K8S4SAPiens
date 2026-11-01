@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SAP → Kubernetes · Operation TLX — Serious Game</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><circle cx='16' cy='16' r='15' fill='%230A6ED1'/><text x='16' y='22' font-size='17' text-anchor='middle' fill='white' font-family='Arial' font-weight='bold'>K</text></svg>">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<header id="topbar" hidden>
+  <div class="tb-inner">
+    <a class="brand" href="#/">
+      <span class="brand-mark">K</span>
+      <span class="brand-txt">Operation <b>TLX</b><em>SAP → Kubernetes</em></span>
+    </a>
+    <div class="tb-progress"><div id="tb-bar"></div></div>
+    <div class="tb-stats">
+      <span class="chip" id="tb-score" title="Score">⭐ <b>0</b></span>
+      <span class="chip" id="tb-time" title="Play time">⏱ <b>0:00</b></span>
+      <button class="btn ghost small" id="tb-book" title="Logbook: SAP ↔ Kubernetes equivalences">📘 Logbook</button>
+    </div>
+  </div>
+</header>
+<main id="app" class="app"></main>
+<div id="toasts"></div>
+<canvas id="fx" hidden></canvas>
+<div id="modal"></div>
+<script src="js/world.js"></script>
+<script src="js/data-a.js"></script>
+<script src="js/data-b.js"></script>
+<script src="js/game.js"></script>
+</body>
+</html>
