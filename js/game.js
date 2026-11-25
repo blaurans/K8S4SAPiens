@@ -917,7 +917,7 @@ function renderBilanFinancial() {
   const br = dg.querySelector('.badge-row');
   Object.keys(BADGES).forEach(k => {
     const on = STATE.badges.includes(k);
-    br.appendChild(el('span', 'badge' + (on ? ' on' : ''), (on ? '' : '🔒 ') + BADGES[k].icon + ' ' + esc(BADGES[k].label)));
+    br.appendChild(el('span', 'badge' + (on ? ' on' : ''), BADGES[k].icon + ' ' + esc(BADGES[k].label)));
   });
   const row = dg.querySelector('.step-actions');
   const r1 = el('button', 'btn', '📘 Review the logbook');
@@ -947,8 +947,8 @@ function openBook() {
   const gl = el('div', 'deflist');
   Object.keys(GLOSS).forEach(k => {
     const on = STATE.gloss.includes(k);
-    gl.appendChild(el('div', 'defitem' + (on ? '' : ' locked'),
-      '<b>' + (on ? esc(k) : '🔒 ————') + '</b><p>' + (on ? esc(GLOSS[k]) : 'Unlocks as you progress through the missions.') + '</p>'));
+    gl.appendChild(el('div', 'defitem',
+      '<b>' + esc(k) + '</b><p>' + (on ? esc(GLOSS[k]) : 'Unlocks as you progress through the missions.') + '</p>'));
   });
   mo.appendChild(gl);
   ov.appendChild(mo);
