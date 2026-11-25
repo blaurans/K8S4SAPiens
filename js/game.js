@@ -405,18 +405,16 @@ function renderDashboard(app) {
   const tms = trackMissions();
 
   /* steady progression */
-  let lockedPrev = false;
   const byCh = {};
   tms.forEach((m, i) => {
-    const locked = !!STATE.done[m.id] ? false : lockedPrev;
-    if (!STATE.done[m.id] && !lockedPrev) lockedPrev = true;
+    const locked = false;
     (byCh[m.ch] = byCh[m.ch] || []).push({ m, locked, done: !!STATE.done[m.id],
-      current: !STATE.done[m.id] && !locked });
+      current: !STATE.done[m.id] });
   });
 
   const head = el('div', 'dash-head');
   head.innerHTML = '<div><h2>Operation TLX · ' + esc(t.name) + '</h2>' +
-    '<p style="color:var(--muted);margin:4px 0 0;font-size:13.5px">Mission control of the migration — player: <b>' + esc(currentPlayerName() || '') + '</b>. Each chapter unlocks the next.</p></div>';
+    '<p style="color:var(--muted);margin:4px 0 0;font-size:13.5px">Mission control of the migration — player: <b>' + esc(currentPlayerName() || '') + '</b>. Pick any mission: they are all freely playable, in any order.</p></div>';
   const meta = el('div', 'dash-meta');
   const remaining = tms.filter(m => !STATE.done[m.id]).reduce((a, m) => a + (m.dur || 12), 0);
   meta.appendChild(el('span', 'chip', '⏳ ~' + remaining + ' min left'));
@@ -492,11 +490,6 @@ function renderMission(app, id) {
   const m = mission(id);
   const tms = trackMissions();
   const idx = tms.findIndex(x => x.id === id);
-  const prev = tms[idx - 1];
-  if (prev && !STATE.done[prev.id]) {
-    toast('First complete the mission "' + prev.title + '"');
-    return go('#/jeu');
-  }
 
   const head = el('div', 'mission-head');
   head.innerHTML = '<div><div class="mch">Chapter ' + m.ch + ' · Mission ' + (idx + 1) + '/' + tms.length + ' · ~' + m.dur + ' min</div><h2>' + esc(m.title) + '</h2></div>';
