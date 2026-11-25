@@ -260,7 +260,7 @@ function renderHome(app) {
     hero.innerHTML = `
       <span class="kicker">Serious game · <span id="hero-dur">1 h to 3 h 30</span> · no Kubernetes prerequisites</span>
       <h1>Operation <span class="grad">TLX</span></h1>
-      <p class="sub">You are Arnaud, a SAP Basis administrator. Your CIO is migrating the SAP landscape to Kubernetes.
+      <p class="sub">You are Arnaud, a SAP Basis administrator. Your Head of DE is migrating the SAP landscape to Kubernetes.
       Good news: you already know the essentials — it is a matter of <b>translation</b>. Welcome aboard.</p>`;
     app.appendChild(hero);
     const gate = el('section', 'panel');
@@ -316,7 +316,7 @@ function renderHome(app) {
   hero.innerHTML = `
     <span class="kicker">Serious game · <span id="hero-dur">1 h to 3 h 30</span> · no Kubernetes prerequisites</span>
     <h1>Operation <span class="grad">TLX</span></h1>
-    <p class="sub">You are Arnaud, a SAP Basis administrator. Your CIO is migrating the SAP landscape to Kubernetes.
+    <p class="sub">You are Arnaud, a SAP Basis administrator. Your Head of DE is migrating the SAP landscape to Kubernetes.
     Good news: you already master the essentials — it is a matter of <b>translation</b>. Guided by Kubea,
     your copilot, you run real kubectl commands on a simulated cluster: Pods, Deployments,
     Services, persistent HANA… then 5 incidents to troubleshoot like an expert.</p>`;
@@ -590,7 +590,7 @@ function completeMission(m, pts) {
    ================================================================ */
 const SPEAKER = {
   kubea: { cls: 'b-kubea', who: 'Kubea — K8s copilot', av: 'K' },
-  dsi: { cls: 'b-dsi', who: 'Cedric J. — CIO', av: 'D' },
+  dsi: { cls: 'b-dsi', who: 'Cedric J. — Head of DE', av: 'D' },
   alert: { cls: 'b-alert', who: 'OPS-ALERT', av: '!' },
   narr: { cls: 'b-narr', who: '', av: '📖' },
   alex: { cls: 'b-alex', who: 'Arnaud — you', av: 'A' }
